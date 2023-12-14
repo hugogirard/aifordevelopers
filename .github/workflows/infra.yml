@@ -13,7 +13,7 @@ env:
   LOCATION: 'canadacentral'
 
 jobs:
-    deploy:
+    create-resources:
         runs-on: ubuntu-latest
 
         steps:
@@ -25,12 +25,7 @@ jobs:
               uses: azure/login@v1
               with:
                 creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-            - uses: azure/arm-deploy@v1
-              with:
-                subscriptionId: $${{ secrets.AZURE_SUBSCRIPTION_ID }}
-                scope: subscription
-                region: ${{ env.LOCATION }}
-                resourceGroupName: ${{ env.RG_NAME}}
-                template: ./infra/main.bicep
-                parameters: location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
+            
+            - name: create-resources
+              run: |
+                az deployment sub create --location canadacentral --template-file .\infra\main.bicep --parameters ocation=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
