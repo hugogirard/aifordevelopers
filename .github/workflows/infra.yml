@@ -28,4 +28,4 @@ jobs:
             
             - name: create-resources
               run: |
-                az deployment sub create --location canadacentral --template-file .\infra\main.bicep --parameters ocation=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
+                az deployment sub create --location canadacentral --template-file ./infra/main.bicep --parameters ocation=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
