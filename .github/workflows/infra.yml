@@ -6,6 +6,7 @@ on:
       - main
     paths:
         - 'infra/**'
+  workflow_dispatch:
 
 env:
   RG_NAME: 'rg-ai-demo'
@@ -18,7 +19,7 @@ jobs:
         steps:
 
             - name: Checkout code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v4
 
             - name: Set up Azure CLI
               uses: azure/login@v1
