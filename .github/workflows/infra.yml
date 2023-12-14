@@ -13,19 +13,19 @@ env:
   LOCATION: 'canadacentral'
 
 jobs:
-    create-resources:
-        runs-on: ubuntu-latest
+  create-resources:
+    runs-on: ubuntu-latest
 
-        steps:
+    steps:
 
-            - name: Checkout code
-              uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-            - name: Set up Azure CLI
-              uses: azure/login@v1
-              with:
-                creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Set up Azure CLI
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
             
-            - name: create-resources
-              run: |
-                az deployment sub create --location canadacentral --template-file ./infra/main.bicep --parameters location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
+      - name: create-resources
+        run: |
+          az deployment sub create --location canadacentral --template-file ./infra/main.bicep --parameters location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
