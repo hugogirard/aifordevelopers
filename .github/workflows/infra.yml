@@ -1,0 +1,35 @@
+name: Azure Deployment
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+        - 'infra/**'
+
+env:
+  RG_NAME: 'rg-ai-demo'
+  LOCATION: 'canadacentral'
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Azure CLI
+              uses: azure/login@v1
+              with:
+                creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+            - uses: azure/arm-deploy@v1
+              with:
+                subscriptionId: $${{ secrets.AZURE_SUBSCRIPTION_ID }}
+                scope: subscription
+                region: ${{ env.LOCATION }}
+                resourceGroupName: ${{ env.RG_NAME}}
+                template: ./infra/main.bicep
+                parameters: location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
