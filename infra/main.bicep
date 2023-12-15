@@ -52,3 +52,5 @@ module function 'modules/function/function.bicep' = {
     storageName: storage.outputs.storageName
   }
 }
+
+output functionName string = function.outputs.functionName
