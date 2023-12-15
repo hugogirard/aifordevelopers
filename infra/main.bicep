@@ -6,7 +6,7 @@ param location string
 @description('The name of the resource group to be created')
 param rgName string 
 
-var suffix = toLower((subscription().id))
+var suffix = toLower(uniqueString(subscription().id))
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: rgName
