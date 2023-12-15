@@ -33,7 +33,17 @@ namespace Contoso
             if (!string.IsNullOrEmpty(model.Description)) 
             {
                 buildOptions.Description = model.Description;
-            }                   
+            }            
+
+            BuildDocumentModelOperation operation;     
+            if (!string.IsNullOrEmpty(model.ModelId))
+            {
+                operation = await trainingClient.BuildDocumentModelAsync(WaitUntil.Completed, sas, DocumentBuildMode.Template, modelId, options: buildOptions);
+            }
+            else 
+            {
+                operation = await trainingClient.BuildDocumentModelAsync(WaitUntil.Completed, sas, DocumentBuildMode.Template, options: buildOptions);
+            }              
         }
     }
 }

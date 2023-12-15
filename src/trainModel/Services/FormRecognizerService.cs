@@ -19,6 +19,9 @@ public class FormRecognizerService
 
     public void BuildDocumentModelAsync(string sas,string modelId)
     {
+        DocumentContentSourceKind kind = new()
+        DocumentContentSource source;
+        source.
         _adminClient.BuildDocumentModelAsync(WaitUntil.Completed,sas,DocumentBuildMode.Template,modelId)
     }
 }

@@ -53,4 +53,13 @@ module function 'modules/function/function.bicep' = {
   }
 }
 
+module openAi 'modules/cognitive/openai.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'openAi'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+
 output functionName string = function.outputs.functionName
