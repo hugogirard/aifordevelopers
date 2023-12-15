@@ -10,7 +10,7 @@ on:
 
 env:
   RG_NAME: 'rg-ai-demo'
-  LOCATION: 'canadacentral'
+  LOCATION: 'eastus'
 
 jobs:
   create-resources:
