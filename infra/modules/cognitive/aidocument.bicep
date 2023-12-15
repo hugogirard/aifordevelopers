@@ -4,7 +4,7 @@ param suffix string
 
 
 resource frmRecognizer 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: 'frmRecognizer-${suffix}'
+  name: 'form-${suffix}'
   location: location
   sku: {
     name: 'S0'
