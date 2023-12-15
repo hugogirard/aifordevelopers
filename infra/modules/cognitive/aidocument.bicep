@@ -2,14 +2,22 @@ param location string
 param suffix string
 
 
-resource formRecognizer 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
-  name: 'form-${suffix}'
+
+resource frmRecognizer 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
+  name: 'frmRecognizer-${suffix}'
   location: location
-  kind: 'FormRecognizer'
   sku: {
     name: 'S0'
   }
+  kind: 'FormRecognizer'
   properties: {
-    
+    customSubDomainName: 'frmRecognizer-${suffix}'
+    publicNetworkAccess: 'Enabled'
+    networkAcls: {
+      defaultAction: 'Allow'
+      virtualNetworkRules: [
+        
+      ]
+    }
   }
 }
