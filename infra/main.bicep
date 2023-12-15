@@ -31,6 +31,15 @@ module formRecognizer 'modules/cognitive/aidocument.bicep' = {
   }
 }
 
+module search 'modules/cognitive/aisearch.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'search'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+
 module insights 'modules/insights/insights.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'insights'
