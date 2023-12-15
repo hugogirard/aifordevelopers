@@ -30,3 +30,25 @@ module formRecognizer 'modules/cognitive/aidocument.bicep' = {
     suffix: suffix
   }
 }
+
+module insights 'modules/insights/insights.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'insights'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+  
+
+module function 'modules/function/function.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'function'
+  params: {
+    location: location
+    suffix: suffix    
+    appInsightname: insights.outputs.appInsightsName
+    formRecognizerName: formRecognizer.outputs.frmRecognizerName
+    storageName: storage.outputs.storageName
+  }
+}

@@ -12,3 +12,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
     accessTier: 'Hot'
   }
 }
+
+
+output storageName string = storageAccount.name
