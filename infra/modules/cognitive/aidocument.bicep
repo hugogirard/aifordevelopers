@@ -11,7 +11,7 @@ resource frmRecognizer 'Microsoft.CognitiveServices/accounts@2023-05-01' = {
   }
   kind: 'FormRecognizer'
   properties: {
-    customSubDomainName: 'frmRecognizer-${suffix}'
+    customSubDomainName: 'form-${suffix}'
     publicNetworkAccess: 'Enabled'
     networkAcls: {
       defaultAction: 'Allow'
