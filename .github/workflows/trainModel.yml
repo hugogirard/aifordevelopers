@@ -21,7 +21,7 @@ jobs:
           dotnet-version: '7.0.x'
       
       - name: Build utility helper
-        run: dotnet build  ./modelUtility.csproj --configuration Release --output ../artefact
+        run: dotnet build  ./modelUtility.csproj --configuration Release --output ../../../artefact
         working-directory: ./src/Utility/modelUtility
 
       - name: listDirectory
