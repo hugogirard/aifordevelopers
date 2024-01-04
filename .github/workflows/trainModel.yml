@@ -1,0 +1,24 @@
+name: Train document intelligent model
+
+on:
+  workflow_dispatch:
+
+env:
+  CONTAINER_NAME: 'trainingassets'
+
+jobs:
+  train-model:
+    runs-on: ubuntu-latest    
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+  
+      - uses: bacongobbler/azure-blob-storage-upload@main
+        with:
+          source_dir: 'samples/training-assets'
+          container_name: ${{ env.CONTAINER_NAME }}}
+          connection_string: ${{ secrets.STORAGE_CNX_STRING }}
+          overwrite: 'true'
+          sync: 'true'
