@@ -20,5 +20,5 @@ jobs:
           source_dir: 'samples/training-assets'
           container_name: ${{ env.CONTAINER_NAME }}}
           connection_string: ${{ secrets.STORAGE_CNX_STRING }}
-          overwrite: 'true'
+          overwrite: true
           sync: 'true'
