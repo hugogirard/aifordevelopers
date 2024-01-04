@@ -7,10 +7,12 @@ namespace Contoso
     public class TrainModel
     {
         private readonly ILogger _logger;
+        private readonly IFormRecognizerService _formRecognizerService;
 
-        public TrainModel(ILoggerFactory loggerFactory)
+        public TrainModel(ILoggerFactory loggerFactory,IFormRecognizerService formRecognizerService)
         {
             _logger = loggerFactory.CreateLogger<TrainModel>();
+            _formRecognizerService = formRecognizerService;
         }
 
         [OpenApiOperation(operationId: "Run", tags: new[] { "name" })]

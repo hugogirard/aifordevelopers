@@ -11,6 +11,7 @@ on:
 env:
   RG_NAME: 'rg-ai-demo'
   LOCATION: 'eastus'
+  DEPLOYMENT_NAME: 'ai-demo-deployment'
 
 jobs:
   create-resources:
@@ -28,4 +29,4 @@ jobs:
             
       - name: create-resources
         run: |
-          az deployment sub create --location canadacentral --template-file ./infra/main.bicep --parameters location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
+          az deployment sub create  --name ${{ env.DEPLOYMENT_NAME }} --location ${{ env.LOCATION }} --template-file ./infra/main.bicep --parameters location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}

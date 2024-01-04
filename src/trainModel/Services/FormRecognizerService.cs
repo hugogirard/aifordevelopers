@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Contoso;
 
-public class FormRecognizerService 
+public class FormRecognizerService : IFormRecognizerService
 {
     private DocumentModelAdministrationClient _adminClient;
 
@@ -14,14 +14,14 @@ public class FormRecognizerService
         AzureKeyCredential credential = new(configuration["FORM_RECOGNIZER_API_KEY"]);
 
         _adminClient = new DocumentModelAdministrationClient(new Uri(configuration["FORM_RECOGNIZER_ENDPOINT"]),
-                                                             credential);        
+                                                             credential);
     }
 
-    public void BuildDocumentModelAsync(string sas,string modelId)
+    public async Task<BuildDocumentModelOperation> BuildDocumentModelAsync(string sas, string modelId)
     {
-        DocumentContentSourceKind kind = new()
-        DocumentContentSource source;
-        source.
-        _adminClient.BuildDocumentModelAsync(WaitUntil.Completed,sas,DocumentBuildMode.Template,modelId)
+        return await _adminClient.BuildDocumentModelAsync(WaitUntil.Started,
+                                                   new Uri(sas),
+                                                   DocumentBuildMode.Template,
+                                                   modelId);
     }
 }
