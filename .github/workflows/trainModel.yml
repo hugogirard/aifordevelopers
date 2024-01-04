@@ -23,3 +23,7 @@ jobs:
       - name: Build utility helper
         run: dotnet build  ./modelUtility.csproj --configuration Release --output ../artefact
         working-directory: ./src/Utility/modelUtility
+
+      - name: listDirectory
+        run: ls -R
+        
