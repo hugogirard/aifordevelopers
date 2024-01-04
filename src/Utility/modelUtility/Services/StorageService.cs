@@ -17,7 +17,7 @@ public class StorageService : IStorageService
         _blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
     }
 
-    public string GetSasContainer()
+    public Uri GetSasContainer()
     {
         var sasBuilder = new BlobSasBuilder
         {
@@ -28,11 +28,8 @@ public class StorageService : IStorageService
             Protocol = SasProtocol.Https,
         };
 
-        sasBuilder.SetPermissions(BlobContainerSasPermissions.Read);
+        sasBuilder.SetPermissions(BlobContainerSasPermissions.All);
 
-        var sasUri = _blobContainerClient.GenerateSasUri(sasBuilder);
-        string sasToken = sasUri.ToString().Split('?')[1];
-
-        return sasToken;
+        return _blobContainerClient.GenerateSasUri(sasBuilder);
     }
 }

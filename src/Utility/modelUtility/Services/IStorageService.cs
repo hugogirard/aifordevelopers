@@ -2,6 +2,6 @@
 {
     public interface IStorageService
     {
-        string GetSasContainer();
+        Uri GetSasContainer();
     }
 }

@@ -26,7 +26,7 @@ namespace modelUtility.Services
                                                                  
         }
 
-        public async Task<BuildDocumentModelOperation> BuildDocumentModelAsync(string sas, string modelId, string description)
+        public async Task<BuildDocumentModelOperation> BuildDocumentModelAsync(Uri sas, string modelId, string description)
         {
             BuildDocumentModelOptions options = new BuildDocumentModelOptions() 
             { 
@@ -34,9 +34,11 @@ namespace modelUtility.Services
             };
 
             var operation = await _adminClient.BuildDocumentModelAsync(WaitUntil.Completed,
-                                                                       new Uri(sas),
+                                                                       sas,
                                                                        DocumentBuildMode.Template,
-                                                                       modelId);
+                                                                       modelId,
+                                                                       string.Empty, 
+                                                                       options);
 
             return operation;
 

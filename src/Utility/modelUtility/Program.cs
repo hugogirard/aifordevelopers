@@ -11,10 +11,10 @@ string[]? parameters;
  parameters = Environment.GetCommandLineArgs();
 #endif
 
-if (parameters.Length > 0)
+if (parameters.Length ==  0)
     throw new Exception("parameters cannot be null");
 
-string command = parameters[1];
+string command = parameters[0];
 
 var bootStrapper = Utility.CreateBoostrapInstance();
 
@@ -27,8 +27,8 @@ switch (operation)
 {
     case Operation.CreateModelDocument:
         // Get ModelId and Description
-        string modelId = parameters[2];
-        string description = parameters[3];
+        string modelId = parameters[1];
+        string description = parameters[2];
         await bootStrapper.CreateModelDocument(modelId, description);
         break;
     default:

@@ -3,22 +3,23 @@ name: Train document intelligent model
 on:
   workflow_dispatch:
 
-env:
-  CONTAINER_NAME: 'trainingassets'
-
 jobs:
   train-model:
     runs-on: ubuntu-latest    
-
+    env:
+        FORM_RECOGNIZER_ENDPOINT: ${{ secrets.FORM_RECOGNIZER_ENDPOINT }}
+        FORM_RECOGNIZER_API_KEY: ${{ secrets.FORM_RECOGNIZER_API_KEY }}
+        STORAGECNXSTRING: ${{ secrets.STORAGE_CNX_STRING }}
+        CONTAINERNAME: 'trainingassets'
     steps:
 
       - name: Checkout code
         uses: actions/checkout@v4
   
-      - uses: bacongobbler/azure-blob-storage-upload@main
+      - uses: actions/setup-dotnet@v3
         with:
-          source_dir: 'samples/training-assets'
-          container_name: ${{ env.CONTAINER_NAME }}}
-          connection_string: ${{ secrets.STORAGE_CNX_STRING }}
-          overwrite: 'true'
-          sync: 'true'
+          dotnet-version: '7.0.x'
+      
+      - name: Build utility helper
+        run: dotnet build --configuration Release --output ../artefact
+        working-directory: ./src/Utility

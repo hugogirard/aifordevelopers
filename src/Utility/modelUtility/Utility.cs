@@ -25,7 +25,7 @@ public class Utility
 
         var serviceProvider = new ServiceCollection()
                                     .AddLogging(c => c.AddConsole())
-                                    .AddSingleton(configuration)
+                                    .AddSingleton<IConfiguration>(configuration)
                                     .AddTransient<IFormRecognizerService, FormRecognizerService>()
                                     .AddTransient<IStorageService, StorageService>()
                                     .AddSingleton<IBootstrapper, Bootstrapper>()

@@ -2,6 +2,6 @@
 
 public interface IFormRecognizerService
 {
-    Task<BuildDocumentModelOperation> BuildDocumentModelAsync(string sas, string modelId, string description);
+    Task<BuildDocumentModelOperation> BuildDocumentModelAsync(Uri sas, string modelId, string description);
 }
 
