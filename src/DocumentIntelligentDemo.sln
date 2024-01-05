@@ -7,7 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "trainModel", "trainModel\trainModel.csproj", "{55E441BD-1A8A-407F-A208-E31FB384DDD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "modelUtility", "Utility\modelUtility\modelUtility.csproj", "{589DDF49-3A6C-4387-BA23-78140F7A7B38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "modelUtility", "Utility\modelUtility\modelUtility.csproj", "{589DDF49-3A6C-4387-BA23-78140F7A7B38}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

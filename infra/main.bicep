@@ -22,9 +22,18 @@ module storage 'modules/storage/storage.bicep' = {
   }
 }
 
-module formRecognizer 'modules/cognitive/aidocument.bicep' = {
+// module formRecognizer 'modules/cognitive/aidocument.bicep' = {
+//   scope: resourceGroup(rg.name)
+//   name: 'formRecognizer'
+//   params: {
+//     location: location
+//     suffix: suffix
+//   }
+// }
+
+module aiService 'modules/cognitive/aiservices.bicep' = {
   scope: resourceGroup(rg.name)
-  name: 'formRecognizer'
+  name: 'aiService'
   params: {
     location: location
     suffix: suffix
