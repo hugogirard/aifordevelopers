@@ -80,4 +80,4 @@ module insights 'modules/insights/insights.bicep' = {
 //   }
 // }
 
-output functionName string = function.outputs.functionName
+//output functionName string = function.outputs.functionName
