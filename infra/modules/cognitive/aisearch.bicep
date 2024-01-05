@@ -5,7 +5,7 @@ resource search 'Microsoft.Search/searchServices@2023-11-01' = {
   name: 'search-${suffix}'
   location: location
   sku: {
-    name: 'basic'
+    name: 'free'
   }  
   properties: {
     publicNetworkAccess: 'enabled'
