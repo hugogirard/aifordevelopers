@@ -65,7 +65,7 @@ if (-Not $SkipFrontendFiles) {
     
     $filePath = "./.env.production"
     if (Test-path $filePath -PathType leaf) {
-        Remove-Item $filePath
+        Remove-Item $filePath -Force
     }
     
     Add-Content -Path $filePath -Value "REACT_APP_BACKEND_URI="
