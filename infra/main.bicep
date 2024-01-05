@@ -6,6 +6,10 @@ param location string
 @description('The name of the resource group to be created')
 param rgName string 
 
+param completionModel string = 'gpt-35-turbo'
+
+param embeddingModel string = 'text-embedding-ada-002'
+
 var suffix = toLower(uniqueString(subscription().id))
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -57,7 +61,6 @@ module insights 'modules/insights/insights.bicep' = {
     suffix: suffix
   }
 }
-  
 
 // module function 'modules/function/function.bicep' = {
 //   scope: resourceGroup(rg.name)
@@ -71,14 +74,16 @@ module insights 'modules/insights/insights.bicep' = {
 //   }
 // }
 
-// module openAi 'modules/cognitive/openai.bicep' = {
-//   scope: resourceGroup(rg.name)
-//   name: 'openAi'
-//   params: {
-//     location: location
-//     suffix: suffix
-//   }
-// }
+module openAi 'modules/cognitive/openai.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'openAi'
+  params: {
+    location: location
+    suffix: suffix
+    completionModel: completionModel
+    embeddingModel: embeddingModel
+  }
+}
 
 module webapp 'modules/webapp/webapp.bicep' = {
   scope: resourceGroup(rg.name)
@@ -87,9 +92,13 @@ module webapp 'modules/webapp/webapp.bicep' = {
     location: location
     suffix: suffix
     appInsightsName: insights.outputs.appInsightsName
-    cognitiveServicesName: formRecognizer.outputs.frmRecognizerName
-    plannerModel: 'todo: get-model-name'
+    aiServicesName: aiService.outputs.aiServicesName
+    openAIName: openAi.outputs.openAIName
+    completionModel: completionModel
+    embeddingModel: embeddingModel
+    searchName: search.outputs.searchName
+    searchIndex: 'order'
   }
 }
 
-output functionName string = function.outputs.functionName
+//output functionName string = function.outputs.functionName
