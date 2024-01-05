@@ -24,10 +24,10 @@ jobs:
         run: dotnet build  .\modelUtility.csproj --configuration Release --output ..\..\..\artefact
         working-directory: .\src\Utility\modelUtility
 
-      - name: listDirectory
-        run: dir
+      # - name: listDirectory
+      #   run: dir
 
-      # - name: Train Model
-      #   run: .\modelUtility.exe "CreateModelDocument" "PurchaseOrder" "Purchase Order to extract key information"
-      #   working-directory: .\artefact
+      - name: Train Model
+        run: .\modelUtility.exe "CreateModelDocument" "PurchaseOrder" "Purchase Order to extract key information"
+        working-directory: .\artefact
         

@@ -1,11 +1,6 @@
 name: Create Azure Resources
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-        - 'infra/**'
   workflow_dispatch:
 
 env:
