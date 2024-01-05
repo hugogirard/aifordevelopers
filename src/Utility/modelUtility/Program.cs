@@ -2,14 +2,7 @@
 
 string[]? parameters;
 
-#if DEBUG
-    parameters = new string[3]
-    {
-        "CreateModelDocument","PurchaseOrder","Purchase Order to extract key information"
-    };
-#else
- parameters = Environment.GetCommandLineArgs();
-#endif
+parameters = Environment.GetCommandLineArgs();
 
 if (parameters.Length ==  0)
     throw new Exception("parameters cannot be null");
