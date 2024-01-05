@@ -7,14 +7,14 @@ using Microsoft.Extensions.Logging;
 
 namespace DocumentIntelligent
 {
-    public class GetModels
+    public class Document
     {
         private readonly ILogger _logger;
         private readonly IDocumentIntelligentService _documentIntelligent;
 
-        public GetModels(ILoggerFactory loggerFactory, IDocumentIntelligentService documentIntelligent)
+        public Document(ILoggerFactory loggerFactory, IDocumentIntelligentService documentIntelligent)
         {
-            _logger = loggerFactory.CreateLogger<GetModels>();
+            _logger = loggerFactory.CreateLogger<Document>();
             _documentIntelligent = documentIntelligent;
         }
 

@@ -19,8 +19,14 @@ resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01'
   properties: {}
 }
 
-resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-04-01' = {
+resource containerTraining 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-04-01' = {
   name: 'trainingassets'
+  parent: blobService
+  properties: {}
+}
+
+resource containerDocument 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-04-01' = {
+  name: 'documents'
   parent: blobService
   properties: {}
 }
