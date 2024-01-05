@@ -18,3 +18,5 @@ resource aiService 'Microsoft.CognitiveServices/accounts@2023-10-01-preview' = {
     }
   }  
 }
+
+output aiServicesName string = aiService.name
