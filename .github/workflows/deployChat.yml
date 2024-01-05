@@ -7,7 +7,7 @@ env:
   RG_NAME: 'rg-ai-demo'
 
 jobs:
-  create-resources:
+  deploy-chat:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Package chat app
+        shell: pwsh
         run: |
           cd src/chat/scripts/deploy
           ./package-webapi.ps1
@@ -26,7 +27,8 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}              
 
       - name: Deploy chat app
+        shell: pwsh
         run: |        
           cd src/chat/scripts/deploy
-          SUBSCRIPTION_ID=$(az account show --query id -o tsv)          
+          $SUBSCRIPTION_ID=$(az account show --query id -o tsv)          
           ./deploy-webapi.ps1 -Subscription $SUBSCRIPTION_ID -ResourceGroupName ${{ env.RG_NAME }} -DeploymentName webapp -SkipAppRegistration -SkipCorsRegistration
