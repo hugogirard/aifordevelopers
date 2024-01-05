@@ -2,14 +2,14 @@ param location string
 param suffix string
 param storageName string
 param appInsightname string
-param formRecognizerName string
+param aiServiceName string
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
   name: storageName  
 }
 
-resource form 'Microsoft.CognitiveServices/accounts@2021-04-30' existing = {
-  name: formRecognizerName  
+resource aiService 'Microsoft.CognitiveServices/accounts@2021-04-30' existing = {
+  name: aiServiceName  
 }
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
@@ -51,21 +51,21 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
         }
         {
-          name: 'ModelContainer'
-          value: 'model'
+          name: 'CONTAINERNAME'
+          value: 'documents'
         }
         {
-          name: 'FormRecognizerEndpoint'
-          value: form.properties.endpoint
+          name: 'STORAGECNXSTRING'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
+        }
+        {
+          name: 'DocumentIntelligentServiceEndpoint'
+          value: aiService.properties.endpoint
         }                  
         {
-          name: 'FormRecognizerKey'
-          value: form.listKeys().key1
-        }        
-        {
-          name: 'DevStorageCnxString'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
-        }                
+          name: 'DocumentIntelligentServiceApiKey'
+          value: aiService.listKeys().key1
+        }                   
         {
           name: 'WEBSITE_CONTENTSHARE'
           value: 'processorapp092'
