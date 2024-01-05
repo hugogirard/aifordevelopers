@@ -1,8 +1,27 @@
 @rootUrl=http://localhost:7134
 @modelId=PurchaseOrder
+@fileName=Form_2_1.pdf
 
 GET  {{rootUrl}}/api/GetModels
 
 ### 
 
 DELETE  {{rootUrl}}/api/DeleteModel?modelId={{modelId}}
+
+
+###
+
+POST {{rootUrl}}/api/AnalyzeModel
+Content-Type: application/json
+
+{
+    "values": [
+        {
+            "recordId": "1",
+            "data": {
+              "metadata_storage_name": "{{fileName}}"
+            }
+        }
+    ]
+    
+}

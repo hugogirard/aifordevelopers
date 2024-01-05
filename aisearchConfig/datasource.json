@@ -1,0 +1,12 @@
+{
+    "type": "azureblob",
+    "credentials": {
+      "connectionString": "__connectionString__"
+    },
+    "container": {
+      "name": "documents"
+    },
+    "name": "dtstorage",
+    "identity": null,
+    "dataDeletionDetectionPolicy": null
+  }
