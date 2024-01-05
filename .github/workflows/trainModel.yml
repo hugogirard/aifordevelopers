@@ -5,7 +5,7 @@ on:
 
 jobs:
   train-model:
-    runs-on: ubuntu-latest    
+    runs-on: windows-latest    
     env:
         FORM_RECOGNIZER_ENDPOINT: ${{ secrets.FORM_RECOGNIZER_ENDPOINT }}
         FORM_RECOGNIZER_API_KEY: ${{ secrets.FORM_RECOGNIZER_API_KEY }}
@@ -18,12 +18,16 @@ jobs:
   
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '8.0.x'
       
       - name: Build utility helper
-        run: dotnet build  ./modelUtility.csproj --configuration Release --output ../../../artefact
-        working-directory: ./src/Utility/modelUtility
+        run: dotnet build  .\modelUtility.csproj --configuration Release --output ..\..\..\artefact
+        working-directory: .\src\Utility\modelUtility
 
-      - name: listDirectory
-        run: ls -R
+      # - name: listDirectory
+      #   run: dir
+
+      - name: Train Model
+        run: .\modelUtility.exe "CreateModelDocument" "PurchaseOrder" "Purchase Order to extract key information"
+        working-directory: .\artefact
         
