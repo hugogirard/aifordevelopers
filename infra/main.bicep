@@ -22,9 +22,18 @@ module storage 'modules/storage/storage.bicep' = {
   }
 }
 
-module formRecognizer 'modules/cognitive/aidocument.bicep' = {
+// module formRecognizer 'modules/cognitive/aidocument.bicep' = {
+//   scope: resourceGroup(rg.name)
+//   name: 'formRecognizer'
+//   params: {
+//     location: location
+//     suffix: suffix
+//   }
+// }
+
+module aiService 'modules/cognitive/aiservices.bicep' = {
   scope: resourceGroup(rg.name)
-  name: 'formRecognizer'
+  name: 'aiService'
   params: {
     location: location
     suffix: suffix
@@ -50,17 +59,17 @@ module insights 'modules/insights/insights.bicep' = {
 }
   
 
-module function 'modules/function/function.bicep' = {
-  scope: resourceGroup(rg.name)
-  name: 'function'
-  params: {
-    location: location
-    suffix: suffix    
-    appInsightname: insights.outputs.appInsightsName
-    formRecognizerName: formRecognizer.outputs.frmRecognizerName
-    storageName: storage.outputs.storageName
-  }
-}
+// module function 'modules/function/function.bicep' = {
+//   scope: resourceGroup(rg.name)
+//   name: 'function'
+//   params: {
+//     location: location
+//     suffix: suffix    
+//     appInsightname: insights.outputs.appInsightsName
+//     formRecognizerName: formRecognizer.outputs.frmRecognizerName
+//     storageName: storage.outputs.storageName
+//   }
+// }
 
 // module openAi 'modules/cognitive/openai.bicep' = {
 //   scope: resourceGroup(rg.name)

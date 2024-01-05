@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{F9F417E9-DCA0-4002-AB40-B3FE19BFD901}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "trainModel", "trainModel\trainModel.csproj", "{55E441BD-1A8A-407F-A208-E31FB384DDD3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "modelUtility", "Utility\modelUtility\modelUtility.csproj", "{589DDF49-3A6C-4387-BA23-78140F7A7B38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{55E441BD-1A8A-407F-A208-E31FB384DDD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55E441BD-1A8A-407F-A208-E31FB384DDD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55E441BD-1A8A-407F-A208-E31FB384DDD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55E441BD-1A8A-407F-A208-E31FB384DDD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{589DDF49-3A6C-4387-BA23-78140F7A7B38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{589DDF49-3A6C-4387-BA23-78140F7A7B38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{589DDF49-3A6C-4387-BA23-78140F7A7B38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{589DDF49-3A6C-4387-BA23-78140F7A7B38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{55E441BD-1A8A-407F-A208-E31FB384DDD3} = {F9F417E9-DCA0-4002-AB40-B3FE19BFD901}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ACEAFF9D-0924-4D04-92CA-EC01614D099A}
+	EndGlobalSection
+EndGlobal

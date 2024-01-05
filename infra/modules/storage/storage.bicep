@@ -13,5 +13,16 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-04-01' = {
   }
 }
 
+resource blobService 'Microsoft.Storage/storageAccounts/blobServices@2023-01-01' = {
+  name: 'default'
+  parent: storageAccount
+  properties: {}
+}
+
+resource container 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-04-01' = {
+  name: 'trainingassets'
+  parent: blobService
+  properties: {}
+}
 
 output storageName string = storageAccount.name
