@@ -71,4 +71,16 @@ module function 'modules/function/function.bicep' = {
 //   }
 // }
 
+module webapp 'modules/webapp/webapp.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'webapp'
+  params: {
+    location: location
+    suffix: suffix
+    appInsightsName: insights.outputs.appInsightsName
+    cognitiveServicesName: formRecognizer.outputs.frmRecognizerName
+    plannerModel: 'todo: get-model-name'
+  }
+}
+
 output functionName string = function.outputs.functionName
