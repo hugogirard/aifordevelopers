@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "trainModel": {
+    "DocumentIntelligent": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7299",
+      "commandLineArgs": "--port 7134",
       "launchBrowser": false
     }
   }

@@ -1,0 +1,8 @@
+@rootUrl=http://localhost:7134
+@modelId=PurchaseOrder
+
+GET  {{rootUrl}}/api/GetModels
+
+### 
+
+DELETE  {{rootUrl}}/api/DeleteModel?modelId={{modelId}}

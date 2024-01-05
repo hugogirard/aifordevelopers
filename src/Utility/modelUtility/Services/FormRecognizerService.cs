@@ -30,8 +30,10 @@ namespace modelUtility.Services
         {
             BuildDocumentModelOptions options = new BuildDocumentModelOptions() 
             { 
-                Description = description
+                Description = description,                
             };
+
+            options.Tags.Add("custom", "true");
 
             var operation = await _adminClient.BuildDocumentModelAsync(WaitUntil.Completed,
                                                                        sas,

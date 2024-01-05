@@ -1,16 +1,14 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Azure.AI.FormRecognizer.DocumentAnalysis;
-using Azure;
+using Contoso;
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
     .ConfigureServices(services => {
-
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
-        services.AddSingleton<IFormRecognizerService, FormRecognizerService>();
+        services.AddSingleton<IDocumentIntelligentService, DocumentIntelligentService>();
     })
     .Build();
 
