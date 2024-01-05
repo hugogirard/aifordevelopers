@@ -194,3 +194,6 @@ resource appServiceWebConfig 'Microsoft.Web/sites/config@2022-09-01' = {
     ])
   }
 }
+
+output webapiName string = appServiceWeb.name
+output webapiUrl string = appServiceWeb.properties.defaultHostName
