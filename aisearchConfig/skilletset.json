@@ -1,0 +1,24 @@
+{
+    "@odata.type": "#Microsoft.Skills.Custom.WebApiSkill",
+    "uri": "__functionUrl__",
+    "httpHeaders": "",
+    "httpMethod": "",
+    "timeout": "PT30S",
+    "batchSize": 0,
+    "degreeOfParallelism": 0,
+    "name": "",
+    "description": "",
+    "context": "",
+    "inputs": [
+      {
+        "name": "metadata_storage_name",
+        "source": "/document/content"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "targetName": ""
+      }
+    ]
+  }

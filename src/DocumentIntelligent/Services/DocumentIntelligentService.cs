@@ -67,7 +67,7 @@ public class DocumentIntelligentService : IDocumentIntelligentService
 
             var fieldActions = new Dictionary<string, Action<string>>
             {
-                    { "purchaseOrderNumber", value => outputRecordData.purchaseOrderNumber = value },
+                    { "PurchaseOrderNumber", value => outputRecordData.purchaseOrderNumber = value },
                     { "Merchant", value => outputRecordData.Merchant = value },
                     { "PhoneNumber", value => outputRecordData.PhoneNumber = value },
                     { "Website", value => outputRecordData.Website = value },
