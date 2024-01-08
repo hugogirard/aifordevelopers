@@ -22,11 +22,13 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
             
-      - name: create-resources
+      - name: Deploy Azure Resources
         id: createResources
-        run: |
-          az deployment sub create  --name ${{ env.DEPLOYMENT_NAME }} --location ${{ env.LOCATION }} --template-file ./infra/main.bicep --parameters location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
-
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}
+          template: ./infra/main.bicep
+          parameters: location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
           
       - uses: gliech/create-github-secret-action@v1
         name: Write function app name
