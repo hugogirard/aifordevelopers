@@ -28,6 +28,7 @@ jobs:
         with:
           subscriptionId: ${{ secrets.SUBSCRIPTION_ID }}
           scope: subscription
+          region: ${{ env.LOCATION }}
           template: ./infra/main.bicep
           parameters: location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
           
