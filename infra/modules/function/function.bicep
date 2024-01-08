@@ -44,11 +44,11 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};AccountKey=${storage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'                  
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};AccountKey=${storage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'                  
         }
         {
           name: 'CONTAINERNAME'
@@ -56,7 +56,7 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'STORAGECNXSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};AccountKey=${storage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'                  
         }
         {
           name: 'DocumentIntelligentServiceEndpoint'
@@ -76,13 +76,20 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: 'dotnet'
+          value: 'dotnet-isolated'
+        }
+        {
+          name: 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED'
+          value: '1'
         }
         {
           name: 'WEBSITE_NODE_DEFAULT_VERSION'
           value: '~12'
         }
       ]
+      cors: {
+        allowedOrigins: ['https://portal.azure.com']
+      }
     }
   }
 }

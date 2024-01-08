@@ -33,8 +33,12 @@ namespace DocumentIntelligent
         public async Task<HttpResponseData> AnalyzeModel([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
         {
 
+            _logger.LogDebug("AnalyzeModel function processed a request.");
+
             var data = await req.ReadFromJsonAsync<WebApiRequest>();
             
+            _logger.LogDebug($"Request Input from Azure Search: {data}");
+
             if (data == null)
             {
                 _logger.LogError("The request schema does not match expected schema.");                
@@ -56,6 +60,8 @@ namespace DocumentIntelligent
 
             foreach (var record in data.Values)
             {
+                _logger.LogDebug($"Record to process: {record}");
+
                 if (record == null || record.RecordId == null) continue;
 
                 OutputRecord responseRecord = new OutputRecord
