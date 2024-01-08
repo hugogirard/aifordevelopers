@@ -1,0 +1,45 @@
+name: Deploy Azure Function
+
+on:
+  workflow_dispatch:
+
+jobs:
+  
+  build-and-deploy:
+
+    runs-on: ubuntu-latest
+
+    env:
+        AZURE_FUNCTIONAPP_PACKAGE_PATH: './src/DocumentIntelligent'
+        AZURE_FUNCTIONAPP_NAME: ${{ secrets.FUNCTIONAPP_NAME }}
+        
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: Azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}        
+
+      - name: Setup DotNet 8.X.X Environment
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 'Building with Dotnet'
+        shell: bash
+        run: |
+          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}'
+          dotnet build --configuration Release --output ./output
+          popd
+
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'   
+
+      - name: logout
+        run: |
+          az logout                    
