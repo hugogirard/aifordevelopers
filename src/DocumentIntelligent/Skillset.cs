@@ -47,6 +47,7 @@ namespace DocumentIntelligent
                return req.CreateBadRequestResponse("The request schema does not match expected schema. Could not find values array.");
             }
 
+
             // Create a response object
             var response = new WebApiResponse
             {
@@ -65,6 +66,8 @@ namespace DocumentIntelligent
                 try
                 {
                     Uri sas = _storageService.GetSasBlobUrl(record.Data.metadata_storage_name);
+
+                    _logger.LogDebug($"SAS URL: {sas}");
 
                     // Call Document Intelligent
                     OutputRecordData outputRecordData  = await _documentIntelligent.AnalyzeDocument(sas,
