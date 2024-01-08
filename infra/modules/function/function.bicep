@@ -35,10 +35,6 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
       netFrameworkVersion: 'v8.0'
       appSettings: [
         {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsights.properties.InstrumentationKey
-        }
-        {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: appInsights.properties.ConnectionString
         }
@@ -81,10 +77,6 @@ resource function 'Microsoft.Web/sites@2020-06-01' = {
         {
           name: 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED'
           value: '1'
-        }
-        {
-          name: 'WEBSITE_NODE_DEFAULT_VERSION'
-          value: '~12'
         }
       ]
       cors: {
