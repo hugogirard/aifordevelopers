@@ -101,4 +101,4 @@ module webapp 'modules/webapp/webapp.bicep' = {
   }
 }
 
-//output functionName string = function.outputs.functionName
+output functionName string = function.outputs.functionName

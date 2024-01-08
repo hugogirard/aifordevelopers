@@ -23,5 +23,14 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
             
       - name: create-resources
+        id: createResources
         run: |
           az deployment sub create  --name ${{ env.DEPLOYMENT_NAME }} --location ${{ env.LOCATION }} --template-file ./infra/main.bicep --parameters location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
+
+          
+      - uses: gliech/create-github-secret-action@v1
+        name: Write function app name
+        with:
+          name: FUNCTIONAPP_NAME
+          value: ${{ steps.createResources.outputs.functionName }}
+          pa_token: ${{ secrets.PA_TOKEN }}          
