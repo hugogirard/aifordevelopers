@@ -5,11 +5,13 @@ import {
     Persona,
     Text,
     ToggleButton,
+    Tooltip,
     makeStyles,
     mergeClasses,
     shorthands,
+    Button
 } from '@fluentui/react-components';
-import { ChevronDown20Regular, ChevronUp20Regular, ThumbDislikeFilled, ThumbLikeFilled } from '@fluentui/react-icons';
+import { ChevronDown20Regular, ChevronUp20Regular, ThumbDislikeFilled, ThumbLikeFilled, Play16Regular } from '@fluentui/react-icons';
 import React, { useState } from 'react';
 import { useChat } from '../../../libs/hooks/useChat';
 import { AuthorRoles, ChatMessageType, IChatMessage, UserFeedback } from '../../../libs/models/ChatMessage';
@@ -26,6 +28,10 @@ import { ChatHistoryDocumentContent } from './ChatHistoryDocumentContent';
 import { ChatHistoryTextContent } from './ChatHistoryTextContent';
 import { CitationCards } from './CitationCards';
 import { UserFeedbackActions } from './UserFeedbackActions';
+import { useMsal } from '@azure/msal-react';
+import { AuthHelper } from '../../../libs/auth/AuthHelper';
+import { SpeechService } from '../../../libs/services/SpeechService';
+import * as speechSdk from 'microsoft-cognitiveservices-speech-sdk';
 
 const useClasses = makeStyles({
     root: {
@@ -93,6 +99,11 @@ const useClasses = makeStyles({
     rlhf: {
         marginLeft: 'auto',
     },
+    playButton: {
+        ...shorthands.padding(0),
+        ...shorthands.margin(0),
+        minWidth: 'auto'
+    },    
 });
 
 interface ChatHistoryItemProps {
@@ -103,6 +114,7 @@ interface ChatHistoryItemProps {
 export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({ message, messageIndex }) => {
     const classes = useClasses();
     const chat = useChat();
+    const { instance, inProgress } = useMsal();    
 
     const { conversations, selectedId } = useAppSelector((state: RootState) => state.conversations);
     const { activeUserInfo, features } = useAppSelector((state: RootState) => state.app);
@@ -144,6 +156,30 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({ message, messa
     const showMessageCitation = messageCitations.length > 0;
     const showExtra = showMessageCitation || showShowRLHFMessage || showCitationCards;
 
+    async function playText(text: string) {
+        const speechService = new SpeechService();
+        const response = await speechService.getSpeechTokenAsync(
+            await AuthHelper.getSKaaSAccessToken(instance, inProgress),
+        );
+        if (response.isSuccess) {
+            const synthesizer = speechService.getSpeechSynthesizerAsyncWithValidKey(response);
+            synthesizer?.speakTextAsync(text,   function (result) {
+                if (result.reason === speechSdk.ResultReason.SynthesizingAudioCompleted) {
+                  console.log("Speech synthesis finished.");
+                } else {
+                  console.error("Speech synthesis canceled, " + result.errorDetails +
+                      "\nDid you set the speech resource key and region values?");
+                }
+                synthesizer.close();
+              },
+              function (err) {
+                console.trace("Speech synthesis faield: " + err);
+                synthesizer.close();
+              });
+        }
+        console.log('Done');
+    }    
+
     return (
         <div
             className={isMe ? mergeClasses(classes.root, classes.alignEnd) : classes.root}
@@ -168,6 +204,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({ message, messa
                     {!isMe && <Text weight="semibold">{fullName}</Text>}
                     <Text className={classes.time}>{timestampToDateString(message.timestamp, true)}</Text>
                     {isBot && <PromptDialog message={message} />}
+                    {isBot && <Tooltip content="Play" relationship='label'><Button className={classes.playButton} icon={<Play16Regular />} appearance="transparent" onClick={ () => { playText(message.content).catch((error: Error) => { console.error(error) })}} /></Tooltip> }
                 </div>
                 {content}
                 {showExtra && (
