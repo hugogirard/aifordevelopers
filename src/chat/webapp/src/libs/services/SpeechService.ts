@@ -32,10 +32,27 @@ export class SpeechService extends BaseService {
         return undefined;
     };
 
+    getSpeechSynthesizerAsyncWithValidKey = (response: TokenResponse) => {
+        const { token, region, isSuccess } = response;
+
+        if (isSuccess) {
+            return this.generateSpeechSynthesizer(token, region);
+        }
+
+        return undefined;
+    };    
+
     private generateSpeechRecognizer(token: string, region: string) {
         const speechConfig = speechSdk.SpeechConfig.fromAuthorizationToken(token, region);
         speechConfig.speechRecognitionLanguage = 'en-US';
         const audioConfig = speechSdk.AudioConfig.fromDefaultMicrophoneInput();
         return new speechSdk.SpeechRecognizer(speechConfig, audioConfig);
     }
+
+    private generateSpeechSynthesizer(token: string, region: string) {
+        const speechConfig = speechSdk.SpeechConfig.fromAuthorizationToken(token, region);
+        speechConfig.speechRecognitionLanguage = 'en-US';
+        const audioConfig = speechSdk.AudioConfig.fromDefaultSpeakerOutput();
+        return new speechSdk.SpeechSynthesizer(speechConfig, audioConfig);
+    }    
 }
