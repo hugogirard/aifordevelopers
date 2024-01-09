@@ -39,6 +39,33 @@ namespace DocumentIntelligent
             }
         }
 
+        [Function("GetModelById")]
+        public async Task<HttpResponseData> GetModelById([HttpTrigger(AuthorizationLevel.Function, "get")] HttpRequestData req) 
+        {
+            try
+            {
+                var query = System.Web.HttpUtility.ParseQueryString(req.Url.Query);
+                var modelId = query["modelId"];
+
+                if (string.IsNullOrEmpty(modelId))
+                    return req.CreateResponse(HttpStatusCode.BadRequest);
+
+                var modelDetails = await _documentIntelligent.GetModelById(modelId);
+
+                // Return the details of the model        
+                var response = req.CreateResponse(HttpStatusCode.OK);
+                response.Headers.Add("Content-Type", "application/json; charset=utf-8");
+                response.WriteString(JsonSerializer.Serialize(modelDetails));
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                return req.CreateResponse(HttpStatusCode.InternalServerError);
+            }
+        }
+
         [Function("DeleteModel")]
         public async Task<HttpResponseData> DeleteModel([HttpTrigger(AuthorizationLevel.Function, "delete")] HttpRequestData req)
         {

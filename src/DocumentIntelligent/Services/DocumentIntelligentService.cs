@@ -45,6 +45,21 @@ public class DocumentIntelligentService : IDocumentIntelligentService
         }
     }
 
+    public async Task<DocumentModelDetails?> GetModelById(string modelId) 
+    {
+        try
+        {
+            var response = await _documentAdminClient.GetDocumentModelAsync(modelId);
+
+            return response.Value;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            return null;
+        }
+    }
+
     public async Task DeleteModel(string id)
     {
         try
@@ -73,10 +88,14 @@ public class DocumentIntelligentService : IDocumentIntelligentService
                     { "Website", value => outputRecordData.Website = value },
                     { "Email", value => outputRecordData.Email = value },
                     { "DatedAs", value => outputRecordData.DatedAs = value },
-                    { "VendorName", value => outputRecordData.VendorName = value },
-                    { "CompanyName", value => outputRecordData.CompanyName = value },
-                    { "CompanyAddress", value => outputRecordData.CompanyAddress = value },
-                    { "CompanyPhoneNumber", value => outputRecordData.CompanyPhoneNumber = value },
+                    { "ShippedToVendorName", value => outputRecordData.ShippedToVendorName = value },
+                    { "ShippedToCompanyName", value => outputRecordData.ShippedToCompanyName = value },
+                    { "ShippedToCompanyAddress", value => outputRecordData.ShippedToCompanyAddress = value },
+                    { "ShippedToCompanyPhoneNumber", value => outputRecordData.ShippedToCompanyPhoneNumber = value },
+                    { "ShippedFromCompanyName", value => outputRecordData.ShippedFromCompanyName = value },
+                    { "ShippedFromCompanyAddress", value => outputRecordData.ShippedFromCompanyAddress = value },
+                    { "ShippedFromCompanyPhoneNumber", value => outputRecordData.ShippedFromCompanyPhoneNumber = value },
+                    { "ShippedFromName", value => outputRecordData.ShippedFromName = value },
                     { "Subtotal", value => outputRecordData.Subtotal = value },
                     { "Tax", value => outputRecordData.Tax = value },
                     { "Total", value => outputRecordData.Total = value },
@@ -93,6 +112,38 @@ public class DocumentIntelligentService : IDocumentIntelligentService
                 if (fieldActions.TryGetValue(fieldName, out var action))
                 {
                     action(field.Value.AsString());
+                }
+            }
+
+            var table = result.Tables.SingleOrDefault(x => x.Cells.Any(x => x.Content == "Details"));
+
+            // Get purchase order items
+            if (table != null) 
+            {
+                int rowIndex = 1;
+                while (true) 
+                {
+                    var cells = table.Cells.Where(x => x.RowIndex == rowIndex);
+                    if (cells.Count() == 0) break;
+
+                    var itemPurchased = new ItemPurchased
+                    {
+                        Detail = cells.SingleOrDefault(x => x.ColumnIndex == 0)?.Content,
+                        Quantity = cells.SingleOrDefault(x => x.ColumnIndex == 1)?.Content,
+                        UnitPrice = cells.SingleOrDefault(x => x.ColumnIndex == 2)?.Content,
+                        Total = cells.SingleOrDefault(x => x.ColumnIndex == 3)?.Content
+                    };
+
+                    // Here we return only if all fields in the table are filled
+                    if (!string.IsNullOrEmpty(itemPurchased.Detail) &&
+                        !string.IsNullOrEmpty(itemPurchased.Quantity) &&
+                        !string.IsNullOrEmpty(itemPurchased.UnitPrice) &&
+                        !string.IsNullOrEmpty(itemPurchased.Total))
+                    {
+                        outputRecordData.ItemsPurchased.Add(itemPurchased);
+                    }
+
+                    rowIndex++;
                 }
             }
 

@@ -6,6 +6,10 @@ GET  {{rootUrl}}/api/GetModels
 
 ### 
 
+GET {{rootUrl}}/api/GetModelById?modelId={{modelId}}
+
+###
+
 DELETE  {{rootUrl}}/api/DeleteModel?modelId={{modelId}}
 
 
