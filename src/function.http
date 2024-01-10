@@ -1,6 +1,6 @@
 @rootUrl=http://localhost:7134
 @modelId=PurchaseOrder
-@fileName=Form_2_1.pdf
+@fileName=purchaseOrderThree.pdf
 
 GET  {{rootUrl}}/api/GetModels
 

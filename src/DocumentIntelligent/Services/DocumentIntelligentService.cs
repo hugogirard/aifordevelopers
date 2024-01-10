@@ -107,10 +107,22 @@ public class DocumentIntelligentService : IDocumentIntelligentService
             {
                 string fieldName = fieldKvp.Key;
                 DocumentField field = fieldKvp.Value;
-
+ 
                 if (fieldActions.TryGetValue(fieldName, out var action))
                 {
-                    action(field.Value.AsString());
+
+                    try
+                    {
+                        string value = field.Value.AsString();
+                        action(value);
+                    }
+                    catch // Happens when field is null
+                    {
+                        continue;
+
+                    }
+
+                    
                 }
             }
 

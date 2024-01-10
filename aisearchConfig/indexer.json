@@ -10,6 +10,9 @@
       "dataToExtract": "storageMetadata"
     }
   },
+  "schedule": {
+    "interval": "PT1H"
+  },
   "skillsetName": "purchaseorderskillset",
   "outputFieldMappings": [
     {
