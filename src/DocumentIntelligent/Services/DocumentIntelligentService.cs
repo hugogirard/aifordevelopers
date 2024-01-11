@@ -72,11 +72,11 @@ public class DocumentIntelligentService : IDocumentIntelligentService
         }
     }
 
-    public async Task<OutputRecordData> AnalyzeDocument(Uri documentUrl, string modelId)
+    public async Task<OutputRecordDataDocumentIntelligent> AnalyzeDocument(Uri documentUrl, string modelId)
     {
         try
         {
-            OutputRecordData outputRecordData = new();
+            OutputRecordDataDocumentIntelligent outputRecordData = new();
             AnalyzeDocumentOperation operation = await _documentAnalysisClient.AnalyzeDocumentFromUriAsync(WaitUntil.Completed, modelId, documentUrl);
             AnalyzeResult result = operation.Value;
 

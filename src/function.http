@@ -29,3 +29,21 @@ Content-Type: application/json
     ]
     
 }
+
+###
+
+POST {{rootUrl}}/api/Vectorize
+Content-Type: application/json
+
+{
+    "values": [
+        {
+            "recordId": "1",
+            "data": {
+              "purchaseOrderNumber": "951753",
+              "ShippedToVendorName": "Jessica White"
+            }
+        }
+    ]
+    
+}

@@ -3,7 +3,7 @@
 /// <summary>
 /// Request payload body from Azure Cognitive Search can be more than one document
 /// </summary>
-public class WebApiRequest
+public class WebApiRequestDocumentIntelligent
 {
-    public List<InputRecord> Values { get; set; }
+    public List<InputRecordDocumentIntelligent> Values { get; set; }
 }

@@ -9,7 +9,7 @@ namespace Contoso
 
         Task DeleteModel(string id);
 
-        Task<OutputRecordData> AnalyzeDocument(Uri documentUrl, string modelId);
+        Task<OutputRecordDataDocumentIntelligent> AnalyzeDocument(Uri documentUrl, string modelId);
 
         Task<DocumentModelDetails?> GetModelById(string modelId);
     }

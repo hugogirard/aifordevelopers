@@ -17,6 +17,7 @@ var host = new HostBuilder()
         });
         services.AddSingleton<IDocumentIntelligentService, DocumentIntelligentService>();
         services.AddSingleton<IStorageSevice,StorageSevice>();
+        services.AddHttpClient();
     })
     .Build();
 

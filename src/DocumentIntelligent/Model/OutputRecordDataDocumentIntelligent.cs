@@ -3,7 +3,7 @@
 /// <summary>
 /// Analyze document from Azure Form Recognizer
 /// </summary>
-public class OutputRecordData
+public class OutputRecordDataDocumentIntelligent
 {
     public string id { get; set; } = Guid.NewGuid().ToString();
 
