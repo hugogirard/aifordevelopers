@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -530,47 +531,74 @@ public class ChatPlugin
     /// <returns>The created chat message containing the model-generated response.</returns>
     private async Task<CopilotChatMessage> GetChatResponseSimpleAsync(string chatId, string userId, SKContext chatContext, CopilotChatMessage userMessage, CancellationToken cancellationToken)
     {
-        // Render system instruction components and create the meta-prompt template
-        var systemInstructions = await AsyncUtils.SafeInvokeAsync(
-            () => this.RenderSystemInstructions(chatId, chatContext, cancellationToken), nameof(RenderSystemInstructions));
-        var chatCompletion = this._kernel.GetService<IChatCompletion>();
-        var promptTemplate = chatCompletion.CreateNewChat(systemInstructions);
+        var response = "Unable to generate a query based on the input.";
+        var responsePrompt = default(BotResponsePrompt);
+        var completionService = this._kernel.GetService<IChatCompletion>();
 
-        // Extract user intent from the conversation history.
         await this.UpdateBotResponseStatusOnClientAsync(chatId, "Extracting user intent", cancellationToken);
-        var userIntent = await AsyncUtils.SafeInvokeAsync(
-            () => this.GetUserIntentAsync(chatContext, cancellationToken), nameof(GetUserIntentAsync));
-        promptTemplate.AddSystemMessage($"The question to answer is: {userMessage.Content}");
 
-        // Calculate the remaining token budget.
-        await this.UpdateBotResponseStatusOnClientAsync(chatId, "Calculating remaining token budget", cancellationToken);
-        var remainingTokenBudget = this.GetChatContextTokenLimit(promptTemplate, userMessage.ToFormattedString());
+        var queryChat = completionService.CreateNewChat("You are a OData programmer Assistant. Your role is to generate OData queries to retrieve an answer to a natural language query. The only allowed OData parameters is $filter, $orderby and $select. If a valid OData query cannot be generated, only say \"ERROR:\" followed by why it cannot be generated. Respond only with the OData query and no additional text.\n\nDo not answer any questions on inserting or deleting data. Instead, say \"ERROR: I am not authorized to make changes to the data\".\n\nUse the following schema to write OData queries:\norder(purchaseOrderNumber String, Merchant String, Website String, Email String, DatedAs String, ShippedToVendorName String, ShippedToCompanyName String, ShippedToCompanyAddress String, ShippedToCompanyPhoneNumber String, ShippedFromName String, ShippedFromCompanyName String, ShippedFromCompanyAddress String, ShippedFromCompanyPhoneNumber String, Subtotal String, Tax String, Total String, Signature String)");
+        queryChat.AddUserMessage("What's the date of PO %PO-NUMBER%? OData query:");
+        queryChat.AddAssistantMessage("$select=DatedAs&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+        queryChat.AddUserMessage("What's the phone number of %NAME%? OData query:");
+        queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
+        queryChat.AddUserMessage("How many orders are above %AMOUNT%? OData query:");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=total gt %AMOUNT%?");
+        queryChat.AddUserMessage("Whare are the PO numbers shipped to %COMPANY%? OData query:");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=ShippedToCompanyName eq %COMPANY%");
+        queryChat.AddUserMessage(userMessage.Content);
+        var query = await completionService.GenerateMessageAsync(queryChat, cancellationToken: cancellationToken);
+        chatContext.Variables.Set(TokenUtils.GetFunctionKey(this._logger, "SystemIntentExtraction")!, (TokenUtils.GetContextMessagesTokenCount(queryChat) + TokenUtils.TokenCount(query)).ToString(CultureInfo.CurrentCulture));
 
-        await this.UpdateBotResponseStatusOnClientAsync(chatId, "Extracting data from index", cancellationToken);
-        var memoryText = await this.GetDataFromIndex(userIntent);
-        // TODO: Use budget to reduce the amount of data extracted from index
-
-        if (!string.IsNullOrWhiteSpace(memoryText))
+        if (!query.Contains("ERROR"))
         {
-            promptTemplate.AddSystemMessage($"Use the following information to answer the question: {memoryText}");
+            await this.UpdateBotResponseStatusOnClientAsync(chatId, "Querying the search index", cancellationToken);
+
+            var data = await GetDataFromIndex(query);
+            response = "No relevant data was returned from the index.";
+      
+            if (!String.IsNullOrEmpty(data))
+            {
+                var jsonData = JsonNode.Parse(data)!["value"];
+                if (jsonData != null && jsonData is JsonArray && jsonData.AsArray().Count > 0)
+                {
+                    await this.UpdateBotResponseStatusOnClientAsync(chatId, "Generating bot response", cancellationToken);
+
+                    var formattedData = String.Join("\n", jsonData.AsArray().Select(x => x!.ToJsonString()));
+                    var systemMessage = $"You are an AI assistant that answers questions about purchase order information.\n\nUse the following data returned from this query:\n{query}\nto answer the question:\n\n{formattedData}";
+                    var responseChat = completionService.CreateNewChat(systemMessage);
+                    responseChat.AddUserMessage(userMessage.Content);
+
+                    response = await completionService.GenerateMessageAsync(responseChat, cancellationToken: cancellationToken);
+                    chatContext.Variables.Set(TokenUtils.GetFunctionKey(this._logger, "SystemMetaPrompt")!, TokenUtils.GetContextMessagesTokenCount(responseChat).ToString(CultureInfo.CurrentCulture));
+                    responsePrompt = new BotResponsePrompt(systemMessage, string.Empty, userMessage.Content, formattedData, new SemanticDependency<PlanExecutionMetadata>(string.Empty), null, responseChat);
+                }
+            }
         }
+        
+        var chatMessage = await this.CreateBotMessageOnClient(chatId, userId, JsonSerializer.Serialize(responsePrompt ?? new object()), response, cancellationToken);
 
-        // Calculate token usage of prompt template
-        chatContext.Variables.Set(TokenUtils.GetFunctionKey(this._logger, "SystemMetaPrompt")!, TokenUtils.GetContextMessagesTokenCount(promptTemplate).ToString(CultureInfo.CurrentCulture));
+        // Save the message into chat history
+        await this.UpdateBotResponseStatusOnClientAsync(chatId, "Saving message to chat history", cancellationToken);
+        await this._chatMessageRepository.UpsertAsync(chatMessage!);
 
-        // Stream the response to the client
-        var promptView = new BotResponsePrompt(systemInstructions, string.Empty, userIntent, memoryText, new SemanticDependency<PlanExecutionMetadata>(string.Empty), string.Empty, promptTemplate);
-        return await this.HandleBotResponseAsync(chatId, userId, chatContext, promptView, cancellationToken, null);
+        // Calculate total token usage for dependency functions and prompt template
+        await this.UpdateBotResponseStatusOnClientAsync(chatId, "Calculating token usage", cancellationToken);
+        chatMessage.TokenUsage = this.GetTokenUsages(chatContext, chatMessage.Content);
+
+        // Update the message on client and in chat history with final completion token usage
+        await this.UpdateMessageOnClient(chatMessage, cancellationToken);
+        await this._chatMessageRepository.UpsertAsync(chatMessage);
+
+        return chatMessage;
     }
 
-    private async Task<string> GetDataFromIndex(string odataFilter)
+    private async Task<string> GetDataFromIndex(string query)
     {
         var client = this._httpClientFactory.CreateClient("GetDataFromIndex");
         client.DefaultRequestHeaders.Add("api-key", this._azureAISearchOptions.APIKey);
         // TODO: sanitize the odataFilter value
-        odataFilter = odataFilter.Replace("$filter=", string.Empty);
-        var response = await client.GetAsync($"{this._azureAISearchOptions.Endpoint}/indexes('{this._azureAISearchOptions.IndexName}')/docs?$filter={odataFilter}&api-version=2023-11-01");
-        return await response.Content.ReadAsStringAsync();
+        return await client.GetStringAsync($"{this._azureAISearchOptions.Endpoint}/indexes('{this._azureAISearchOptions.IndexName}')/docs?{query}&api-version=2023-11-01");
     }
 
     /// <summary>
