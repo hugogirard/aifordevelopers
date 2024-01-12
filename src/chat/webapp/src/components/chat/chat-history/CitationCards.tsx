@@ -6,12 +6,8 @@ import {
     Card,
     CardHeader,
     makeStyles,
-    shorthands,
-    Text,
-    ToggleButton,
+    shorthands
 } from '@fluentui/react-components';
-import { ChevronDown20Regular, ChevronUp20Regular } from '@fluentui/react-icons';
-import React, { useState } from 'react';
 import { IChatMessage } from '../../../libs/models/ChatMessage';
 import { customTokens } from '../../../styles';
 
@@ -35,34 +31,9 @@ interface ICitationCardsProps {
 export const CitationCards: React.FC<ICitationCardsProps> = ({ message }) => {
     const classes = useClasses();
 
-    const [showSnippetStates, setShowSnippetStates] = useState<boolean[]>([]);
-    React.useEffect(() => {
-        initShowSnippetStates();
-        // This will only run once, when the component is mounted
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
     if (!message.citations || message.citations.length === 0) {
         return null;
     }
-
-    const initShowSnippetStates = () => {
-        if (!message.citations) {
-            return;
-        }
-
-        const newShowSnippetStates = [...showSnippetStates];
-        message.citations.forEach((_, index) => {
-            newShowSnippetStates[index] = false;
-        });
-        setShowSnippetStates(newShowSnippetStates);
-    };
-
-    const showSnippet = (index: number) => {
-        const newShowSnippetStates = [...showSnippetStates];
-        newShowSnippetStates[index] = !newShowSnippetStates[index];
-        setShowSnippetStates(newShowSnippetStates);
-    };
 
     return (
         <div className={classes.root}>
@@ -75,20 +46,9 @@ export const CitationCards: React.FC<ICitationCardsProps> = ({ message }) => {
                                     {index + 1}
                                 </Badge>
                             }
-                            header={<Text weight="semibold">{citation.sourceName}</Text>}
+                            header={<a target="_blank" rel="noreferrer" href={citation.link}>{citation.sourceName}</a>}
                             description={<Caption1>Relevance score: {citation.relevanceScore.toFixed(3)}</Caption1>}
-                            action={
-                                <ToggleButton
-                                    appearance="transparent"
-                                    icon={showSnippetStates[index] ? <ChevronUp20Regular /> : <ChevronDown20Regular />}
-                                    onClick={() => {
-                                        showSnippet(index);
-                                    }}
-                                />
-                            }
                         />
-
-                        {showSnippetStates[index] && <p>{citation.snippet}</p>}
                     </Card>
                 );
             })}
