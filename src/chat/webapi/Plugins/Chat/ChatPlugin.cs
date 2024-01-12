@@ -547,6 +547,8 @@ public class ChatPlugin
         queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=Total gt %AMOUNT%?");
         queryChat.AddUserMessage("Whare are the PO numbers shipped to %COMPANY%? OData query:");
         queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=ShippedToCompanyName eq %COMPANY%");
+        queryChat.AddUserMessage("What items are on PO %PO-NUMBER% OData query:");
+        queryChat.AddAssistantMessage("$select=ItemPurchased&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
 
         queryChat.AddUserMessage("Quelle est la date de la commande %PO-NUMBER%? OData query:");
         queryChat.AddAssistantMessage("$select=DatedAs&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
@@ -556,6 +558,8 @@ public class ChatPlugin
         queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=Total gt %AMOUNT%?");
         queryChat.AddUserMessage("Quelles commandes ont été livrées à %COMPANY%? OData query:");
         queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=ShippedToCompanyName eq %COMPANY%");
+        queryChat.AddUserMessage("Quels items sont sur la commande %PO-NUMBER% OData query:");
+        queryChat.AddAssistantMessage("$select=ItemPurchased&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
 
         queryChat.AddUserMessage(userMessage.Content);
         var query = await completionService.GenerateMessageAsync(queryChat, cancellationToken: cancellationToken);
