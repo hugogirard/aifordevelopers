@@ -25,9 +25,11 @@ public class Utility
 
         var serviceProvider = new ServiceCollection()
                                     .AddLogging(c => c.AddConsole())
+                                    .AddHttpClient()
                                     .AddSingleton<IConfiguration>(configuration)
-                                    .AddTransient<IFormRecognizerService, FormRecognizerService>()
+                                    .AddTransient<IDocumentIntelligent, DocumentIntelligent>()
                                     .AddTransient<IStorageService, StorageService>()
+                                    .AddTransient<IAISearchService, AISearchService>()
                                     .AddSingleton<IBootstrapper, Bootstrapper>()
                                     .BuildServiceProvider();
 

@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace modelUtility.Services
 {
-    public class FormRecognizerService : IFormRecognizerService
+    public class DocumentIntelligent : IDocumentIntelligent
     {
         private DocumentModelAdministrationClient _adminClient;
 
-        public FormRecognizerService(IConfiguration configuration)
+        public DocumentIntelligent(IConfiguration configuration)
         {
             string endpoint = configuration["FORM_RECOGNIZER_ENDPOINT"] 
                                 ?? throw new ArgumentNullException("FORM_RECOGNIZER_ENDPOINT not found");
