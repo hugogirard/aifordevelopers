@@ -538,6 +538,7 @@ public class ChatPlugin
         await this.UpdateBotResponseStatusOnClientAsync(chatId, "Extracting user intent", cancellationToken);
 
         var queryChat = completionService.CreateNewChat("You are a OData programmer Assistant. Your role is to generate OData queries to retrieve an answer to a natural language query. The only allowed OData parameters is $filter, $orderby and $select. If a valid OData query cannot be generated, only say \"ERROR:\" followed by why it cannot be generated. Respond only with the OData query and no additional text.\n\nDo not answer any questions on inserting or deleting data. Instead, say \"ERROR: I am not authorized to make changes to the data\".\n\nUse the following schema to write OData queries:\norder(purchaseOrderNumber String, Merchant String, Website String, Email String, DatedAs String, ShippedToVendorName String, ShippedToCompanyName String, ShippedToCompanyAddress String, ShippedToCompanyPhoneNumber String, ShippedFromName String, ShippedFromCompanyName String, ShippedFromCompanyAddress String, ShippedFromCompanyPhoneNumber String, Subtotal String, Tax String, Total String, Signature String)");
+        
         queryChat.AddUserMessage("What's the date of PO %PO-NUMBER%? OData query:");
         queryChat.AddAssistantMessage("$select=DatedAs&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
         queryChat.AddUserMessage("What's the phone number of %NAME%? OData query:");
@@ -546,6 +547,16 @@ public class ChatPlugin
         queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=Total gt %AMOUNT%?");
         queryChat.AddUserMessage("Whare are the PO numbers shipped to %COMPANY%? OData query:");
         queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=ShippedToCompanyName eq %COMPANY%");
+
+        queryChat.AddUserMessage("Quelle est la date de la commande %PO-NUMBER%? OData query:");
+        queryChat.AddAssistantMessage("$select=DatedAs&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+        queryChat.AddUserMessage("Quelle est le numéro de téléphone de %NAME%? OData query:");
+        queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
+        queryChat.AddUserMessage("Combien de commandes totalisent plus de %AMOUNT%? OData query:");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=Total gt %AMOUNT%?");
+        queryChat.AddUserMessage("Quelles commandes ont été livrées à %COMPANY%? OData query:");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=ShippedToCompanyName eq %COMPANY%");
+
         queryChat.AddUserMessage(userMessage.Content);
         var query = await completionService.GenerateMessageAsync(queryChat, cancellationToken: cancellationToken);
         chatContext.Variables.Set(TokenUtils.GetFunctionKey(this._logger, "SystemIntentExtraction")!, (TokenUtils.GetContextMessagesTokenCount(queryChat) + TokenUtils.TokenCount(query)).ToString(CultureInfo.CurrentCulture));
