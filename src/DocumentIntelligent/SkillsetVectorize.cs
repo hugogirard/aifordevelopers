@@ -36,7 +36,7 @@ public class SkillsetVectorize
         _httpClientFactory = httpClientFactory;
     }
 
-    [Function("Vectorize")]
+    //[Function("Vectorize")]
     public async Task<HttpResponseData> VectorizeModel([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestData req)
     {
         _logger.LogDebug("AnalyzeModel function processed a request.");
