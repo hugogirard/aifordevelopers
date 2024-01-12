@@ -30,10 +30,10 @@ public class OutputRecordDataDocumentIntelligent
 
     public List<ItemPurchased> ItemsPurchased { get; set; } = new();
 
-    public string Subtotal { get; set; }
-    public string Tax { get; set; }
+    public double Subtotal { get; set; }
+    public double Tax { get; set; }
 
-    public string Total { get; set; }
+    public double Total { get; set; }
 
     public string Signature { get; set; }
 }
@@ -43,9 +43,9 @@ public class  ItemPurchased
 {
     public string Detail { get; set; }
 
-    public string Quantity { get; set; }
+    public double Quantity { get; set; }
 
-    public string UnitPrice { get; set; }
+    public double UnitPrice { get; set; }
 
-    public string Total { get; set; }
+    public double Total { get; set; }
 }

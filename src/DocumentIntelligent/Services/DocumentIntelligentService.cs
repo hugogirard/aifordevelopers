@@ -1,5 +1,6 @@
 using Azure;
 using DocumentIntelligent;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -95,9 +96,9 @@ public class DocumentIntelligentService : IDocumentIntelligentService
                     { "ShippedFromCompanyAddress", value => outputRecordData.ShippedFromCompanyAddress = value },
                     { "ShippedFromCompanyPhoneNumber", value => outputRecordData.ShippedFromCompanyPhoneNumber = value },
                     { "ShippedFromName", value => outputRecordData.ShippedFromName = value },
-                    { "Subtotal", value => outputRecordData.Subtotal = value },
-                    { "Tax", value => outputRecordData.Tax = value },
-                    { "Total", value => outputRecordData.Total = value },
+                    { "Subtotal", value => outputRecordData.Subtotal = double.Parse(value) },
+                    { "Tax", value => outputRecordData.Tax = double.Parse(value) },
+                    { "Total", value => outputRecordData.Total = double.Parse(value) },
                     { "Signature", value => outputRecordData.Signature = value }
             };
 
@@ -113,8 +114,20 @@ public class DocumentIntelligentService : IDocumentIntelligentService
 
                     try
                     {
-                        string value = field.Value.AsString();
-                        action(value);
+                        string valueConverted = field.Value.AsString();
+                        // Remove the $ sign if present
+                        switch (fieldName)
+                        {
+                            case "Subtotal":
+                            case "Tax":
+                            case "Total":
+                                valueConverted = valueConverted.Replace("$", "");
+                                break;
+                            default:
+                                break;
+                        }
+                                                
+                        action(valueConverted);
                     }
                     catch // Happens when field is null
                     {
@@ -129,27 +142,41 @@ public class DocumentIntelligentService : IDocumentIntelligentService
             var table = result.Tables.SingleOrDefault(x => x.Cells.Any(x => x.Content == "Details"));
 
             // Get purchase order items
-            if (table != null) 
+            if (table != null)
             {
                 int rowIndex = 1;
-                while (true) 
+                while (true)
                 {
                     var cells = table.Cells.Where(x => x.RowIndex == rowIndex);
                     if (cells.Count() == 0) break;
 
+                    double value = 0;
+
                     var itemPurchased = new ItemPurchased
                     {
-                        Detail = cells.SingleOrDefault(x => x.ColumnIndex == 0)?.Content,
-                        Quantity = cells.SingleOrDefault(x => x.ColumnIndex == 1)?.Content,
-                        UnitPrice = cells.SingleOrDefault(x => x.ColumnIndex == 2)?.Content,
-                        Total = cells.SingleOrDefault(x => x.ColumnIndex == 3)?.Content
+                        Detail = cells.SingleOrDefault(x => x.ColumnIndex == 0)?.Content
                     };
 
+                    if (cells.SingleOrDefault(x => x.ColumnIndex == 1)?.Content != null)
+                        double.TryParse(cells.SingleOrDefault(x => x.ColumnIndex == 1)?.Content, out value);
+
+                    itemPurchased.Quantity = value;
+
+                    if (cells.SingleOrDefault(x => x.ColumnIndex == 2)?.Content != null)
+                        double.TryParse(cells.SingleOrDefault(x => x.ColumnIndex == 2)?.Content, out value);
+
+                    itemPurchased.UnitPrice = value;
+
+                    if (cells.SingleOrDefault(x => x.ColumnIndex == 3)?.Content != null)
+                        double.TryParse(cells.SingleOrDefault(x => x.ColumnIndex == 3)?.Content, out value);
+
+                    itemPurchased.Total = value;
+                    
                     // Here we return only if all fields in the table are filled
                     if (!string.IsNullOrEmpty(itemPurchased.Detail) &&
-                        !string.IsNullOrEmpty(itemPurchased.Quantity) &&
-                        !string.IsNullOrEmpty(itemPurchased.UnitPrice) &&
-                        !string.IsNullOrEmpty(itemPurchased.Total))
+                        itemPurchased.Quantity != 0 &&
+                        itemPurchased.UnitPrice != 0 &&
+                        itemPurchased.Total != 0)
                     {
                         outputRecordData.ItemsPurchased.Add(itemPurchased);
                     }

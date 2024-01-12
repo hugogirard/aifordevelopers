@@ -89,7 +89,7 @@
       },
       {
         "name": "DatedAs",
-        "type": "Edm.DateTimeOffset",
+        "type": "Edm.String",
         "searchable": false,
         "filterable": true,
         "retrievable": true,
@@ -243,7 +243,7 @@
       {
         "name": "Subtotal",
         "type": "Edm.Double",
-        "searchable": true,
+        "searchable": false,
         "filterable": true,
         "retrievable": true,
         "sortable": false,
@@ -260,7 +260,7 @@
       {
         "name": "Tax",
         "type": "Edm.Double",
-        "searchable": true,
+        "searchable": false,
         "filterable": true,
         "retrievable": true,
         "sortable": false,
@@ -277,7 +277,7 @@
       {
         "name": "Total",
         "type": "Edm.Double",
-        "searchable": true,
+        "searchable": false,
         "filterable": true,
         "retrievable": true,
         "sortable": false,
@@ -412,7 +412,7 @@
       },
       {
         "name": "ItemPurchased",
-        "type": "Edm.ComplexType",
+        "type": "Collection(Edm.ComplexType)",
         "fields": [
           {
             "name": "Detail",
