@@ -533,6 +533,7 @@ public class ChatPlugin
     {
         var response = "Unable to generate a query based on the input.";
         var responsePrompt = default(BotResponsePrompt);
+        var citations = new List<CitationSource>();
         var completionService = this._kernel.GetService<IChatCompletion>();
 
         await this.UpdateBotResponseStatusOnClientAsync(chatId, "Extracting user intent", cancellationToken);
@@ -540,7 +541,7 @@ public class ChatPlugin
         var queryChat = completionService.CreateNewChat("You are a OData programmer Assistant. Your role is to generate OData queries to retrieve an answer to a natural language query. The only allowed OData parameters is $filter, $orderby and $select. If a valid OData query cannot be generated, only say \"ERROR:\" followed by why it cannot be generated. Respond only with the OData query and no additional text.\n\nDo not answer any questions on inserting or deleting data. Instead, say \"ERROR: I am not authorized to make changes to the data\".\n\nUse the following schema to write OData queries:\norder(purchaseOrderNumber String, Merchant String, Website String, Email String, DatedAs String, ShippedToVendorName String, ShippedToCompanyName String, ShippedToCompanyAddress String, ShippedToCompanyPhoneNumber String, ShippedFromName String, ShippedFromCompanyName String, ShippedFromCompanyAddress String, ShippedFromCompanyPhoneNumber String, Subtotal String, Tax String, Total String, Signature String)");
         
         queryChat.AddUserMessage("What's the date of PO %PO-NUMBER%? OData query:");
-        queryChat.AddAssistantMessage("$select=DatedAs&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+        queryChat.AddAssistantMessage("$select=*&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
         queryChat.AddUserMessage("What's the phone number of %NAME%? OData query:");
         queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
         queryChat.AddUserMessage("How many orders are above %AMOUNT%? OData query:");
@@ -551,7 +552,7 @@ public class ChatPlugin
         queryChat.AddAssistantMessage("$select=ItemPurchased&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
 
         queryChat.AddUserMessage("Quelle est la date de la commande %PO-NUMBER%? OData query:");
-        queryChat.AddAssistantMessage("$select=DatedAs&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+        queryChat.AddAssistantMessage("$select=*&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
         queryChat.AddUserMessage("Quelle est le numéro de téléphone de %NAME%? OData query:");
         queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
         queryChat.AddUserMessage("Combien de commandes totalisent plus de %AMOUNT%? OData query:");
@@ -587,11 +588,17 @@ public class ChatPlugin
                     response = await completionService.GenerateMessageAsync(responseChat, cancellationToken: cancellationToken);
                     chatContext.Variables.Set(TokenUtils.GetFunctionKey(this._logger, "SystemMetaPrompt")!, TokenUtils.GetContextMessagesTokenCount(responseChat).ToString(CultureInfo.CurrentCulture));
                     responsePrompt = new BotResponsePrompt(systemMessage, string.Empty, userMessage.Content, formattedData, new SemanticDependency<PlanExecutionMetadata>(string.Empty), null, responseChat);
+
+                    if (jsonData.AsArray().Count == 1 && jsonData.AsArray()[0]!["metadata_storage_path"] != null)
+                    {
+                        //TODO: Generate SAS token for document
+                        citations.Add(new CitationSource() { SourceName = "PO", RelevanceScore = double.Parse(jsonData.AsArray()[0]!["@search.score"]!.ToString()), Link = jsonData.AsArray()[0]!["metadata_storage_path"]!.ToString() });
+                    }
                 }
             }
         }
         
-        var chatMessage = await this.CreateBotMessageOnClient(chatId, userId, JsonSerializer.Serialize(responsePrompt ?? new object()), response, cancellationToken);
+        var chatMessage = await this.CreateBotMessageOnClient(chatId, userId, JsonSerializer.Serialize(responsePrompt ?? new object()), response, cancellationToken, citations);
 
         // Save the message into chat history
         await this.UpdateBotResponseStatusOnClientAsync(chatId, "Saving message to chat history", cancellationToken);
