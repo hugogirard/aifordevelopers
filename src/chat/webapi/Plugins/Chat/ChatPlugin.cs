@@ -543,7 +543,7 @@ public class ChatPlugin
         queryChat.AddUserMessage("What's the phone number of %NAME%? OData query:");
         queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
         queryChat.AddUserMessage("How many orders are above %AMOUNT%? OData query:");
-        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=total gt %AMOUNT%?");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=Total gt %AMOUNT%?");
         queryChat.AddUserMessage("Whare are the PO numbers shipped to %COMPANY%? OData query:");
         queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=ShippedToCompanyName eq %COMPANY%");
         queryChat.AddUserMessage(userMessage.Content);
@@ -598,7 +598,17 @@ public class ChatPlugin
         var client = this._httpClientFactory.CreateClient("GetDataFromIndex");
         client.DefaultRequestHeaders.Add("api-key", this._azureAISearchOptions.APIKey);
         // TODO: sanitize the odataFilter value
-        return await client.GetStringAsync($"{this._azureAISearchOptions.Endpoint}/indexes('{this._azureAISearchOptions.IndexName}')/docs?{query}&api-version=2023-11-01");
+        var response = await client.GetAsync($"{this._azureAISearchOptions.Endpoint}/indexes('{this._azureAISearchOptions.IndexName}')/docs?{query}&api-version=2023-11-01");
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadAsStringAsync();
+        }
+        else
+        {
+            
+            this._logger.LogWarning($"Error getting data from index: {response.StatusCode}: {response.Content.ReadAsStringAsync()}");
+            return string.Empty;
+        }
     }
 
     /// <summary>
