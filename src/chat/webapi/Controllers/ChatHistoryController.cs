@@ -86,6 +86,7 @@ public class ChatHistoryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateChatSessionAsync(
+        [FromHeader] string language,
         [FromBody] CreateChatParameters chatParameters)
     {
         if (chatParameters.Title == null)
@@ -100,7 +101,7 @@ public class ChatHistoryController : ControllerBase
         // Create initial bot message
         var chatMessage = CopilotChatMessage.CreateBotResponseMessage(
             newChat.Id,
-            this._promptOptions.InitialBotMessage,
+            language == "en" ? this._promptOptions.InitialBotMessageEN : this._promptOptions.InitialBotMessageFR,
             string.Empty, // The initial bot message doesn't need a prompt.
             null,
             TokenUtils.EmptyTokenUsages());

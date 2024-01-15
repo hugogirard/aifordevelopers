@@ -1,9 +1,17 @@
 {
+    "ChatCopilot": "Copilote Clavardage",
     "Today": "Aujourd'hui",
     "Chat": "Clavardage",
     "Documents": "Documents",
     "Plans": "Plans",
     "Persona": "Persona",
     "Plugins": "Plugiciels",
-    "Settings": "Paramètres"
+    "Settings": "Paramètres",
+    "Connecting": "Connexion...",
+    "BackendExpected": "Cette application s'attend que le backend s'exécute à l'adresse suivante",
+    "RunLocallyCommand": "Pour exécuter le serveur localement, utilisez Visual Studio, Visual Studio Code, ou tapez la commande suivante:",
+    "RunLocallyVar1": "Si vous exécutez localement, assurez-vous d'avoir la variable",
+    "RunLocallyVar2": "définie dans votre fichier",
+    "RunLocallyVar3": "webapp/.env",
+    "LoadingChats": "Chargement des clavardages..."
 }

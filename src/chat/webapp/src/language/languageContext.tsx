@@ -11,9 +11,10 @@ const defaultContext = {
   t: (key: string) => key,
   i18n: null as unknown as i18n,
   onClickLanguageChange: (e: any) => { e==e; },
-  languages: languages,  
+  languages: languages
 };
 
+export let CurrentLanguage = "fr";
 export const LanguageContext = createContext(defaultContext);
 
 export const LanguageContextProvider = ({ children }: { children: React.ReactNode }) => {
@@ -22,6 +23,7 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
 
   const onClickLanguageChange = (e: { target: { value: string } }) => {
     const language = e.target.value;
+    CurrentLanguage = language;
     i18n.changeLanguage(language).catch(() => { console.error("Error changing language"); });; //change the language
   };
 

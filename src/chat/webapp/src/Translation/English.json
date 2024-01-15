@@ -1,9 +1,17 @@
 {
+    "ChatCopilot": "Chat Copilot",
     "Today": "Today",
     "Chat": "Chat",
     "Documents": "Documents",
     "Plans": "Plans",
     "Persona": "Persona",
     "Plugins": "Plugins",
-    "Settings": "Settings"
+    "Settings": "Settings",
+    "Connecting": "Connecting...",
+    "BackendExpected": "This app expects to find a server running at",
+    "RunLocallyCommand": "To run the server locally, use Visual Studio, Visual Studio Code, or type the following command:",
+    "RunLocallyVar1": "If running locally, ensure that you have the",
+    "RunLocallyVar2": "variable set in the file",
+    "RunLocallyVar3": "webapp/.env",
+    "LoadingChats": "Loading chats..."
 }
