@@ -31,10 +31,11 @@ interface ICitationCardsProps {
 export const CitationCards: React.FC<ICitationCardsProps> = ({ message }) => {
     const classes = useClasses();
 
-    const BackendServiceUrl =
+    let BackendServiceUrl =
     process.env.REACT_APP_BACKEND_URI == null || process.env.REACT_APP_BACKEND_URI.trim() === ''
         ? window.origin
         : process.env.REACT_APP_BACKEND_URI;
+    if (!BackendServiceUrl.endsWith('/')) BackendServiceUrl += '/';
 
     if (!message.citations || message.citations.length === 0) {
         return null;
