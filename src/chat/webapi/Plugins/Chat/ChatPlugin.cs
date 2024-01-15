@@ -538,29 +538,29 @@ public class ChatPlugin
 
         await this.UpdateBotResponseStatusOnClientAsync(chatId, "Extracting user intent", cancellationToken);
 
-        var queryChat = completionService.CreateNewChat("You are a OData programmer Assistant. Your role is to generate OData queries to retrieve an answer to a natural language query. The only allowed OData parameters is $filter, $orderby and $select. If a valid OData query cannot be generated, only say \"ERROR:\" followed by why it cannot be generated. Respond only with the OData query and no additional text.\n\nDo not answer any questions on inserting or deleting data. Instead, say \"ERROR: I am not authorized to make changes to the data\".\n\nUse the following schema to write OData queries:\norder(purchaseOrderNumber String, Merchant String, Website String, Email String, DatedAs String, ShippedToVendorName String, ShippedToCompanyName String, ShippedToCompanyAddress String, ShippedToCompanyPhoneNumber String, ShippedFromName String, ShippedFromCompanyName String, ShippedFromCompanyAddress String, ShippedFromCompanyPhoneNumber String, Subtotal String, Tax String, Total String, Signature String)");
+        var queryChat = completionService.CreateNewChat("You are a OData programmer Assistant. Your role is to generate OData queries to retrieve an answer to a natural language query. The only allowed OData parameters is $filter, $orderby and $select. If a valid OData query cannot be generated, only say \"ERROR:\" followed by why it cannot be generated. Respond only with the OData query and no additional text.\n\nDo not answer any questions on inserting or deleting data. Instead, say \"ERROR: I am not authorized to make changes to the data\".\n\nUse the following schema to write OData queries:\norder(purchaseOrderNumber String, Merchant String, Website String, Email String, DatedAs String, ShippedToVendorName String, ShippedToCompanyName String, ShippedToCompanyAddress String, ShippedToCompanyPhoneNumber String, ShippedFromName String, ShippedFromCompanyName String, ShippedFromCompanyAddress String, ShippedFromCompanyPhoneNumber String, Subtotal String, Tax String, Total String, Signature String, metadata_storage_name String). Always include the metadata_storage_name field.");
         
         queryChat.AddUserMessage("What's the date of PO %PO-NUMBER%? OData query:");
-        queryChat.AddAssistantMessage("$select=*&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+        queryChat.AddAssistantMessage("$select=DatedAs,metadata_storage_name&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
         queryChat.AddUserMessage("What's the phone number of %NAME%? OData query:");
-        queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
+        queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber,metadata_storage_name&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
         queryChat.AddUserMessage("How many orders are above %AMOUNT%? OData query:");
-        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=Total gt %AMOUNT%?");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber,metadata_storage_name&$filter=Total gt %AMOUNT%?");
         queryChat.AddUserMessage("Whare are the PO numbers shipped to %COMPANY%? OData query:");
-        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=ShippedToCompanyName eq %COMPANY%");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber,metadata_storage_name&$filter=ShippedToCompanyName eq %COMPANY%");
         queryChat.AddUserMessage("What items are on PO %PO-NUMBER% OData query:");
-        queryChat.AddAssistantMessage("$select=ItemPurchased&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+        queryChat.AddAssistantMessage("$select=ItemPurchased,metadata_storage_name&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
 
         queryChat.AddUserMessage("Quelle est la date de la commande %PO-NUMBER%? OData query:");
-        queryChat.AddAssistantMessage("$select=*&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+        queryChat.AddAssistantMessage("$select=DatedAs,metadata_storage_name&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
         queryChat.AddUserMessage("Quelle est le numéro de téléphone de %NAME%? OData query:");
-        queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
+        queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber,metadata_storage_name&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
         queryChat.AddUserMessage("Combien de commandes totalisent plus de %AMOUNT%? OData query:");
-        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=Total gt %AMOUNT%?");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&,metadata_storage_name$filter=Total gt %AMOUNT%?");
         queryChat.AddUserMessage("Quelles commandes ont été livrées à %COMPANY%? OData query:");
-        queryChat.AddAssistantMessage("$select=purchaseOrderNumber&$filter=ShippedToCompanyName eq %COMPANY%");
+        queryChat.AddAssistantMessage("$select=purchaseOrderNumber,metadata_storage_name&$filter=ShippedToCompanyName eq %COMPANY%");
         queryChat.AddUserMessage("Quels items sont sur la commande %PO-NUMBER% OData query:");
-        queryChat.AddAssistantMessage("$select=ItemPurchased&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+        queryChat.AddAssistantMessage("$select=ItemPurchased,metadata_storage_name&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
 
         queryChat.AddUserMessage(userMessage.Content);
         var query = await completionService.GenerateMessageAsync(queryChat, cancellationToken: cancellationToken);
@@ -589,7 +589,7 @@ public class ChatPlugin
                     chatContext.Variables.Set(TokenUtils.GetFunctionKey(this._logger, "SystemMetaPrompt")!, TokenUtils.GetContextMessagesTokenCount(responseChat).ToString(CultureInfo.CurrentCulture));
                     responsePrompt = new BotResponsePrompt(systemMessage, string.Empty, userMessage.Content, formattedData, new SemanticDependency<PlanExecutionMetadata>(string.Empty), null, responseChat);
 
-                    if (jsonData.AsArray().Count == 1 && jsonData.AsArray()[0]!["metadata_storage_path"] != null)
+                    if (jsonData.AsArray().Count == 1 && jsonData.AsArray()[0]!["metadata_storage_name"] != null)
                     {
                         //TODO: Generate SAS token for document
                         citations.Add(new CitationSource() { SourceName = "PO", RelevanceScore = double.Parse(jsonData.AsArray()[0]!["@search.score"]!.ToString()), Link = jsonData.AsArray()[0]!["metadata_storage_name"]!.ToString() });
