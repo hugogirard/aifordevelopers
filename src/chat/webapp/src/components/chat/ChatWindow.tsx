@@ -29,6 +29,7 @@ import { EditChatName } from './shared/EditChatName';
 import { DocumentsTab } from './tabs/DocumentsTab';
 import { PersonaTab } from './tabs/PersonaTab';
 import { PlansTab } from './tabs/PlansTab';
+import { useLanguageContext } from "../../language/languageContext";
 
 const useClasses = makeStyles({
     root: {
@@ -90,6 +91,7 @@ const useClasses = makeStyles({
 
 export const ChatWindow: React.FC = () => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const { features } = useAppSelector((state: RootState) => state.app);
     const { conversations, selectedId } = useAppSelector((state: RootState) => state.conversations);
     const showShareBotMenu = features[FeatureKeys.BotAsDocs].enabled || features[FeatureKeys.MultiUserChat].enabled;
@@ -147,7 +149,7 @@ export const ChatWindow: React.FC = () => {
                     )}
                     <TabList selectedValue={selectedTab} onTabSelect={onTabSelect}>
                         <Tab data-testid="chatTab" id="chat" value="chat" aria-label="Chat Tab" title="Chat Tab">
-                            Chat
+                        {t("Chat")}
                         </Tab>
                         <Tab
                             data-testid="documentsTab"
@@ -156,7 +158,7 @@ export const ChatWindow: React.FC = () => {
                             aria-label="Documents Tab"
                             title="Documents Tab"
                         >
-                            Documents
+                            {t("Documents")}
                         </Tab>
                         {features[FeatureKeys.PluginsPlannersAndPersonas].enabled && (
                             <>
@@ -168,7 +170,7 @@ export const ChatWindow: React.FC = () => {
                                     aria-label="Plans Tab"
                                     title="Plans Tab"
                                 >
-                                    Plans
+                                    {t("Plans")}
                                 </Tab>
                                 <Tab
                                     data-testid="personaTab"
@@ -178,7 +180,7 @@ export const ChatWindow: React.FC = () => {
                                     aria-label="Persona Tab"
                                     title="Persona Tab"
                                 >
-                                    Persona
+                                    {t("Persona")}
                                 </Tab>
                             </>
                         )}

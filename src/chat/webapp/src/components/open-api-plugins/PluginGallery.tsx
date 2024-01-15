@@ -26,6 +26,7 @@ import { Plugin, PluginAuthRequirements } from '../../redux/features/plugins/Plu
 import { AppsAddIn24, Dismiss24 } from '../shared/BundledIcons';
 import { AddPluginCard } from './cards/AddPluginCard';
 import { PluginCard } from './cards/PluginCard';
+import { useLanguageContext } from "../../language/languageContext";
 
 const useClasses = makeStyles({
     root: {
@@ -62,6 +63,7 @@ const useClasses = makeStyles({
 
 export const PluginGallery: React.FC = () => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const dispatch = useDispatch();
 
     const { plugins } = useAppSelector((state: RootState) => state.plugins);
@@ -121,7 +123,7 @@ export const PluginGallery: React.FC = () => {
                     title="Plugins Gallery"
                     aria-label="Plugins Gallery"
                 >
-                    Plugins
+                    {t("Plugins")}
                 </Button>
             </DialogTrigger>
             <DialogSurface className={classes.root}>

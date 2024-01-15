@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/app/hooks';
 import { RootState } from '../../redux/app/store';
 import { setMaintenance } from '../../redux/features/app/appSlice';
 import { useSharedClasses } from '../../styles';
+import { useLanguageContext } from "../../language/languageContext";
 
 interface IData {
     onBackendFound: () => void;
@@ -18,6 +19,7 @@ interface IData {
 
 export const BackendProbe: FC<IData> = ({ onBackendFound }) => {
     const classes = useSharedClasses();
+    const { t } = useLanguageContext();
     const dispatch = useAppDispatch();
     const { isMaintenance } = useAppSelector((state: RootState) => state.app);
     const maintenanceService = useMemo(() => new MaintenanceService(), []);
@@ -84,23 +86,23 @@ export const BackendProbe: FC<IData> = ({ onBackendFound }) => {
                 </div>
             ) : (
                 <div className={classes.informativeView}>
-                    <Title3>Connecting...</Title3>
+                    <Title3>{t("Connecting")}</Title3>
                     <Spinner />
                     <Body1>
-                        This app expects to find a server running at <strong>{BackendServiceUrl}</strong>
+                        {t("BackendExpected")} <strong>{BackendServiceUrl}</strong>
                     </Body1>
                     <Body1>
-                        To run the server locally, use Visual Studio, Visual Studio Code, or type the following command:{' '}
+                        {t("RunLocallyCommand")}{' '}
                         <code>
                             <strong>dotnet run</strong>
                         </code>
                     </Body1>
                     <Body1>
-                        If running locally, ensure that you have the{' '}
+                        {t("RunLocallyVar1")}{' '}
                         <code>
                             <b>REACT_APP_BACKEND_URI</b>
                         </code>{' '}
-                        variable set in your <b>webapp/.env</b> file
+                        {t("RunLocallyVar2")} <b>{t("RunLocallyVar3")}</b>
                     </Body1>
                 </div>
             )}

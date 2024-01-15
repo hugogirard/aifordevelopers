@@ -57,7 +57,8 @@ public class PromptsOptions
 
     // System
     [Required, NotEmptyOrWhitespace] public string KnowledgeCutoffDate { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string InitialBotMessage { get; set; } = string.Empty;
+    [Required, NotEmptyOrWhitespace] public string InitialBotMessageEN { get; set; } = string.Empty;
+    [Required, NotEmptyOrWhitespace] public string InitialBotMessageFR { get; set; } = string.Empty;
     [Required, NotEmptyOrWhitespace] public string SystemDescription { get; set; } = string.Empty;
     [Required, NotEmptyOrWhitespace] public string SystemResponse { get; set; } = string.Empty;
 

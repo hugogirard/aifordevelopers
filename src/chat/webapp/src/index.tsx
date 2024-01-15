@@ -12,6 +12,11 @@ import React from 'react';
 import { BackendServiceUrl } from './libs/services/BaseService';
 import { setAuthConfig } from './redux/features/app/appSlice';
 
+import { LanguageContextProvider } from "./language/languageContext";
+import LanguageSelect from "./language/languageSelect";
+
+import "./i18next";
+
 if (!localStorage.getItem('debug')) {
     localStorage.setItem('debug', `${Constants.debug.root}:*`);
 }
@@ -52,11 +57,14 @@ export function renderApp() {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 root!.render(
                     <React.StrictMode>
-                        <ReduxProvider store={store}>
-                            <MsalProvider instance={msalInstance}>
-                                <App />
-                            </MsalProvider>
-                        </ReduxProvider>
+                        <LanguageContextProvider>
+                            <LanguageSelect />
+                            <ReduxProvider store={store}>
+                                <MsalProvider instance={msalInstance}>
+                                    <App />
+                                </MsalProvider>
+                            </ReduxProvider>
+                        </LanguageContextProvider>
                     </React.StrictMode>,
                 );
             }
@@ -68,9 +76,12 @@ export function renderApp() {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     root!.render(
         <React.StrictMode>
-            <ReduxProvider store={store}>
-                <App />
-            </ReduxProvider>
+            <LanguageContextProvider>
+                <LanguageSelect />
+                <ReduxProvider store={store}>
+                    <App />
+                </ReduxProvider>
+            </LanguageContextProvider>
         </React.StrictMode>,
     );
 }

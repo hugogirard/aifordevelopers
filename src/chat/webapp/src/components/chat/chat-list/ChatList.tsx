@@ -27,6 +27,7 @@ import { isToday } from '../../utils/TextUtils';
 import { NewBotMenu } from './bot-menu/NewBotMenu';
 import { SimplifiedNewBotMenu } from './bot-menu/SimplifiedNewBotMenu';
 import { ChatListSection } from './ChatListSection';
+import { useLanguageContext } from "../../../language/languageContext";
 
 const useClasses = makeStyles({
     root: {
@@ -89,6 +90,7 @@ interface ConversationsView {
 
 export const ChatList: FC = () => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const { features } = useAppSelector((state: RootState) => state.app);
     const { conversations } = useAppSelector((state: RootState) => state.conversations);
 
@@ -212,7 +214,7 @@ export const ChatList: FC = () => {
             </div>
             <div aria-label={'chat list'} className={classes.list}>
                 {conversationsView.latestConversations && (
-                    <ChatListSection header="Today" conversations={conversationsView.latestConversations} />
+                    <ChatListSection header={t("Today")} conversations={conversationsView.latestConversations} />
                 )}
                 {conversationsView.olderConversations && (
                     <ChatListSection header="Older" conversations={conversationsView.olderConversations} />
