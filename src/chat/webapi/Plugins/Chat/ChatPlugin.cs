@@ -592,7 +592,7 @@ public class ChatPlugin
                     if (jsonData.AsArray().Count == 1 && jsonData.AsArray()[0]!["metadata_storage_path"] != null)
                     {
                         //TODO: Generate SAS token for document
-                        citations.Add(new CitationSource() { SourceName = "PO", RelevanceScore = double.Parse(jsonData.AsArray()[0]!["@search.score"]!.ToString()), Link = jsonData.AsArray()[0]!["metadata_storage_path"]!.ToString() });
+                        citations.Add(new CitationSource() { SourceName = "PO", RelevanceScore = double.Parse(jsonData.AsArray()[0]!["@search.score"]!.ToString()), Link = jsonData.AsArray()[0]!["metadata_storage_name"]!.ToString() });
                     }
                 }
             }

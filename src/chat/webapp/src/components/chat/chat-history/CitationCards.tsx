@@ -31,6 +31,11 @@ interface ICitationCardsProps {
 export const CitationCards: React.FC<ICitationCardsProps> = ({ message }) => {
     const classes = useClasses();
 
+    const BackendServiceUrl =
+    process.env.REACT_APP_BACKEND_URI == null || process.env.REACT_APP_BACKEND_URI.trim() === ''
+        ? window.origin
+        : process.env.REACT_APP_BACKEND_URI;
+
     if (!message.citations || message.citations.length === 0) {
         return null;
     }
@@ -46,7 +51,7 @@ export const CitationCards: React.FC<ICitationCardsProps> = ({ message }) => {
                                     {index + 1}
                                 </Badge>
                             }
-                            header={<a target="_blank" rel="noreferrer" href={citation.link}>{citation.sourceName}</a>}
+                            header={<a target="_blank" rel="noreferrer" href={`${BackendServiceUrl}documents/${citation.link}`}>{citation.link}</a>}
                             description={<Caption1>Relevance score: {citation.relevanceScore.toFixed(3)}</Caption1>}
                         />
                     </Card>

@@ -1,4 +1,4 @@
-name: Deploy the chat
+name: Deploy Chat
 
 on:
   workflow_dispatch:
