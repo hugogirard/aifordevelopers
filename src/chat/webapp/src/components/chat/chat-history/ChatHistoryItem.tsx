@@ -224,7 +224,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({ message, messa
                                 size="small"
                             >
                                 {`${messageCitations.length} ${
-                                    messageCitations.length === 1 ? 'citation' : 'citations'
+                                    messageCitations.length === 1 ? t("Citation") : t("Citations")
                                 }`}
                             </ToggleButton>
                         )}

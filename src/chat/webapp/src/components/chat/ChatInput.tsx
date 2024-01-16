@@ -145,7 +145,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ isDraggingOver, onDragLeav
 
         setValue('');
         dispatch(editConversationInput({ id: selectedId, newInput: '' }));
-        dispatch(updateBotResponseStatus({ chatId: selectedId, status: 'Calling the kernel' }));
+        dispatch(updateBotResponseStatus({ chatId: selectedId, status: t('CallingKernel') }));
         onSubmit({ value, messageType, chatId: selectedId }).catch((error) => {
             const message = `Error submitting chat input: ${(error as Error).message}`;
             log(message);

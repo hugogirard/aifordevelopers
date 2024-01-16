@@ -28,5 +28,14 @@
     "AttachFile": "Attach a file",
     "ChatInput": "Chat input",
     "Submit": "Submit",
-    "RecordMessage": "Record a message"
+    "RecordMessage": "Record a message",
+    "CallingKernel": "Calling the kernel",
+    "Citation": "citation",
+    "Citations": "citations",
+    "RelevanceScore": "Relevance score",    
+    "DeleteChatConfirm": "Are you sure you want to delete chat",
+    "DeleteChatInfo": "This action will permanently delete the chat, and any associated resources and memories, for all participants, including Chat Copilot.",
+    "Delete": "Delete",
+    "Cancel": "Cancel",
+    "ChatDeleted": "The following chat has been deleted successfully"
 }

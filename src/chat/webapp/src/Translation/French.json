@@ -28,5 +28,14 @@
     "AttachFile": "Joindre un fichier",
     "ChatInput": "Entrée de clavardage",
     "Submit": "Soumettre",
-    "RecordMessage": "Enregistrer un message"
+    "RecordMessage": "Enregistrer un message",
+    "CallingKernel": "Appel du noyau",
+    "Citation": "citation",
+    "Citations": "citations",
+    "RelevanceScore": "Score de pertinence",
+    "DeleteChatConfirm": "Êtes-vous sûr de vouloir supprimer le clavardage",
+    "DeleteChatInfo": "Cette action va supprimer le clavardage de façon permanente, ainsi que toutes les ressources associées, pour tous les partipcants, incluant Copilote Clavarage.",
+    "Delete": "Supprimer",
+    "Cancel": "Annuler",
+    "ChatDeleted": "Le clavardage suivant a été supprimé avec succès"
 }

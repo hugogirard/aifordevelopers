@@ -336,11 +336,13 @@ public class ChatPlugin
         SKContext context,        
         CancellationToken cancellationToken = default)
     {
+        Resource.Culture = new CultureInfo(language);
+
         // Set the system description in the prompt options
         await this.SetSystemDescriptionAsync(chatId, cancellationToken);
 
         // Save this new message to memory such that subsequent chat responses can use it
-        await this.UpdateBotResponseStatusOnClientAsync(chatId, "Saving user message to chat history", cancellationToken);
+        await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.SaveUserMessageChatHistory, cancellationToken);
         var newUserMessage = await this.SaveNewMessageAsync(message, userId, userName, chatId, messageType, cancellationToken);
 
         // Clone the context to avoid modifying the original context variables.
@@ -532,42 +534,22 @@ public class ChatPlugin
     /// <param name="userMessage">ChatMessage object representing new user message.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>The created chat message containing the model-generated response.</returns>
-    private async Task<CopilotChatMessage> GetChatResponseSimpleAsync(string chatId, string userId, SKContext chatContext, CopilotChatMessage userMessage, string lanugage, CancellationToken cancellationToken)
+    private async Task<CopilotChatMessage> GetChatResponseSimpleAsync(string chatId, string userId, SKContext chatContext, CopilotChatMessage userMessage, string language, CancellationToken cancellationToken)
     {
-        var response = "Unable to generate a query based on the input.";
+        Resource.Culture = new CultureInfo(language);
+        var response = Resource.UnableGenerateQuery;
         var responsePrompt = default(BotResponsePrompt);
         var citations = new List<CitationSource>();
         var completionService = this._kernel.GetService<IChatCompletion>();
 
-        await this.UpdateBotResponseStatusOnClientAsync(chatId, "Extracting user intent", cancellationToken);
+        await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.ExtractUserIntent, cancellationToken);
 
-        var queryChat = completionService.CreateNewChat("You are a OData programmer Assistant. Your role is to generate OData queries to retrieve an answer to a natural language query. The only allowed OData parameters is $filter, $orderby and $select. If a valid OData query cannot be generated, only say \"ERROR:\" followed by why it cannot be generated. Respond only with the OData query and no additional text.\n\nDo not answer any questions on inserting or deleting data. Instead, say \"ERROR: I am not authorized to make changes to the data\".\n\nUse the following schema to write OData queries:\norder(purchaseOrderNumber String, Merchant String, Website String, Email String, DatedAs String, ShippedToVendorName String, ShippedToCompanyName String, ShippedToCompanyAddress String, ShippedToCompanyPhoneNumber String, ShippedFromName String, ShippedFromCompanyName String, ShippedFromCompanyAddress String, ShippedFromCompanyPhoneNumber String, Subtotal String, Tax String, Total String, Signature String, metadata_storage_name String). Always include the metadata_storage_name field.");
+        var queryChat = completionService.CreateNewChat(this._promptOptions.SystemIntent);
 
-        if (lanugage == "en")
+        foreach(var fewShot in language == "en" ? this._promptOptions.FewShotEN : this._promptOptions.FewShotFR)
         {
-            queryChat.AddUserMessage("What's the date of PO %PO-NUMBER%? OData query:");
-            queryChat.AddAssistantMessage("$select=DatedAs,metadata_storage_name&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
-            queryChat.AddUserMessage("What's the phone number of %NAME%? OData query:");
-            queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber,metadata_storage_name&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
-            queryChat.AddUserMessage("How many orders are above %AMOUNT%? OData query:");
-            queryChat.AddAssistantMessage("$select=purchaseOrderNumber,metadata_storage_name&$filter=Total gt %AMOUNT%?");
-            queryChat.AddUserMessage("Whare are the PO numbers shipped to %COMPANY%? OData query:");
-            queryChat.AddAssistantMessage("$select=purchaseOrderNumber,metadata_storage_name&$filter=ShippedToCompanyName eq %COMPANY%");
-            queryChat.AddUserMessage("What items are on PO %PO-NUMBER% OData query:");
-            queryChat.AddAssistantMessage("$select=ItemPurchased,metadata_storage_name&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
-        }
-        else
-        {
-            queryChat.AddUserMessage("Quelle est la date de la commande %PO-NUMBER%? OData query:");
-            queryChat.AddAssistantMessage("$select=DatedAs,metadata_storage_name&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
-            queryChat.AddUserMessage("Quelle est le numéro de téléphone de %NAME%? OData query:");
-            queryChat.AddAssistantMessage("$select=ShippedFromCompanyName,ShippedFromCompanyPhoneNumber,ShippedToCompanyName,ShippedToCompanyPhoneNumber,metadata_storage_name&$filter=(ShippedFromCompanyName eq '%NAME%') or (ShippedToCompanyName eq '%NAME%')");
-            queryChat.AddUserMessage("Combien de commandes totalisent plus de %AMOUNT%? OData query:");
-            queryChat.AddAssistantMessage("$select=purchaseOrderNumber&,metadata_storage_name$filter=Total gt %AMOUNT%?");
-            queryChat.AddUserMessage("Quelles commandes ont été livrées à %COMPANY%? OData query:");
-            queryChat.AddAssistantMessage("$select=purchaseOrderNumber,metadata_storage_name&$filter=ShippedToCompanyName eq %COMPANY%");
-            queryChat.AddUserMessage("Quels items sont sur la commande %PO-NUMBER% OData query:");
-            queryChat.AddAssistantMessage("$select=ItemPurchased,metadata_storage_name&$filter=purchaseOrderNumber eq '%PO-NUMBER%'");
+            queryChat.AddUserMessage($"{fewShot.Key}:");
+            queryChat.AddAssistantMessage(fewShot.Value);
         }
 
         queryChat.AddUserMessage(userMessage.Content);
@@ -576,20 +558,20 @@ public class ChatPlugin
 
         if (!query.Contains("ERROR"))
         {
-            await this.UpdateBotResponseStatusOnClientAsync(chatId, "Querying the search index", cancellationToken);
+            await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.QuerySearchIndex, cancellationToken);
 
             var data = await GetDataFromIndex(query);
-            response = "No relevant data was returned from the index.";
+            response = Resource.NoRelevantData;
       
             if (!String.IsNullOrEmpty(data))
             {
                 var jsonData = JsonNode.Parse(data)!["value"];
                 if (jsonData != null && jsonData is JsonArray && jsonData.AsArray().Count > 0)
                 {
-                    await this.UpdateBotResponseStatusOnClientAsync(chatId, "Generating bot response", cancellationToken);
+                    await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.GenerateBotResponse, cancellationToken);
 
                     var formattedData = String.Join("\n", jsonData.AsArray().Select(x => x!.ToJsonString()));
-                    var systemMessage = $"You are an AI assistant that answers questions about purchase order information.\n\nUse the following data returned from this query:\n{query}\nto answer the question:\n\n{formattedData}";
+                    var systemMessage = String.Format(this._promptOptions.SystemDescription, query, formattedData);
                     var responseChat = completionService.CreateNewChat(systemMessage);
                     responseChat.AddUserMessage(userMessage.Content);
 
@@ -599,8 +581,7 @@ public class ChatPlugin
 
                     if (jsonData.AsArray().Count == 1 && jsonData.AsArray()[0]!["metadata_storage_name"] != null)
                     {
-                        //TODO: Generate SAS token for document
-                        citations.Add(new CitationSource() { SourceName = "PO", RelevanceScore = double.Parse(jsonData.AsArray()[0]!["@search.score"]!.ToString()), Link = jsonData.AsArray()[0]!["metadata_storage_name"]!.ToString() });
+                        citations.Add(new CitationSource() { RelevanceScore = double.Parse(jsonData.AsArray()[0]!["@search.score"]!.ToString()), Link = jsonData.AsArray()[0]!["metadata_storage_name"]!.ToString() });
                     }
                 }
             }
@@ -609,11 +590,11 @@ public class ChatPlugin
         var chatMessage = await this.CreateBotMessageOnClient(chatId, userId, JsonSerializer.Serialize(responsePrompt ?? new object()), response, cancellationToken, citations);
 
         // Save the message into chat history
-        await this.UpdateBotResponseStatusOnClientAsync(chatId, "Saving message to chat history", cancellationToken);
+        await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.SaveMessageChatHistory, cancellationToken);
         await this._chatMessageRepository.UpsertAsync(chatMessage!);
 
         // Calculate total token usage for dependency functions and prompt template
-        await this.UpdateBotResponseStatusOnClientAsync(chatId, "Calculating token usage", cancellationToken);
+        await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.CalculateTokenUsage, cancellationToken);
         chatMessage.TokenUsage = this.GetTokenUsages(chatContext, chatMessage.Content);
 
         // Update the message on client and in chat history with final completion token usage
