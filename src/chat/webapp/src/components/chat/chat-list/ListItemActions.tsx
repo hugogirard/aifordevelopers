@@ -12,6 +12,7 @@ import { Breakpoints } from '../../../styles';
 import { ArrowDownload16, Edit, Share20 } from '../../shared/BundledIcons';
 import { InvitationCreateDialog } from '../invitation-dialog/InvitationCreateDialog';
 import { DeleteChatDialog } from './dialogs/DeleteChatDialog';
+import { useLanguageContext } from "../../../language/languageContext";
 
 const useClasses = makeStyles({
     root: {
@@ -29,6 +30,7 @@ interface IListItemActionsProps {
 
 export const ListItemActions: React.FC<IListItemActionsProps> = ({ chatId, onEditTitleClick }) => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const { features } = useAppSelector((state: RootState) => state.app);
     const { conversations } = useAppSelector((state: RootState) => state.conversations);
 
@@ -59,7 +61,7 @@ export const ListItemActions: React.FC<IListItemActionsProps> = ({ chatId, onEdi
                 </Tooltip>
             ) : (
                 <>
-                    <Tooltip content={'Edit chat name'} relationship="label">
+                    <Tooltip content={t("EditChatName")} relationship="label">
                         <Button
                             icon={<Edit />}
                             appearance="transparent"
@@ -68,7 +70,7 @@ export const ListItemActions: React.FC<IListItemActionsProps> = ({ chatId, onEdi
                             data-testid="editChatTitleButtonSimplified"
                         />
                     </Tooltip>
-                    <Tooltip content={'Download chat session'} relationship="label">
+                    <Tooltip content={t("DownloadChatSession")} relationship="label">
                         <Button
                             disabled={!features[FeatureKeys.BotAsDocs].enabled}
                             icon={<ArrowDownload16 />}
@@ -77,7 +79,7 @@ export const ListItemActions: React.FC<IListItemActionsProps> = ({ chatId, onEdi
                             onClick={onDownloadBotClick}
                         />
                     </Tooltip>
-                    <Tooltip content={'Share live chat code'} relationship="label">
+                    <Tooltip content={t("ShareLiveChatCode")} relationship="label">
                         <Button
                             disabled={!features[FeatureKeys.MultiUserChat].enabled}
                             icon={<Share20 />}

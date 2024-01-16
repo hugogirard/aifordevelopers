@@ -32,6 +32,7 @@ import { useDialogClasses } from '../../../styles';
 import { TokenUsageGraph } from '../../token-usage/TokenUsageGraph';
 import { formatParagraphTextContent } from '../../utils/TextUtils';
 import { StepwiseThoughtProcessView } from './stepwise-planner/StepwiseThoughtProcessView';
+import { useLanguageContext } from "../../../language/languageContext";
 
 const useClasses = makeStyles({
     infoButton: {
@@ -52,6 +53,7 @@ interface IPromptDialogProps {
 
 export const PromptDialog: React.FC<IPromptDialogProps> = ({ message }) => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const dialogClasses = useDialogClasses();
 
     const [selectedTab, setSelectedTab] = React.useState<TabValue>('formatted');
@@ -119,7 +121,7 @@ export const PromptDialog: React.FC<IPromptDialogProps> = ({ message }) => {
     return (
         <Dialog>
             <DialogTrigger disableButtonEnhancement>
-                <Tooltip content={'Show prompt'} relationship="label">
+                <Tooltip content={t('ShowPrompt')} relationship="label">
                     <Button className={classes.infoButton} icon={<Info16Regular />} appearance="transparent" />
                 </Tooltip>
             </DialogTrigger>

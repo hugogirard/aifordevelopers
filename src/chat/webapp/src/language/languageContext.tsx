@@ -15,11 +15,13 @@ const defaultContext = {
 };
 
 export let CurrentLanguage = "fr";
+export let TranslationFunc = (key: string) => key;
 export const LanguageContext = createContext(defaultContext);
 
 export const LanguageContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { t, i18n } = useTranslation();
+  TranslationFunc = t;
 
   const onClickLanguageChange = (e: { target: { value: string } }) => {
     const language = e.target.value;

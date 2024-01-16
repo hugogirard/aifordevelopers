@@ -1,5 +1,6 @@
 {
     "ChatCopilot": "Chat Copilot",
+    "Copilot": "Copilot",
     "Today": "Today",
     "Chat": "Chat",
     "Documents": "Documents",
@@ -13,5 +14,19 @@
     "RunLocallyVar1": "If running locally, ensure that you have the",
     "RunLocallyVar2": "variable set in the file",
     "RunLocallyVar3": "webapp/.env",
-    "LoadingChats": "Loading chats..."
+    "LoadingChats": "Loading chats...",
+    "NewChat": "New Chat",
+    "AddChat": "Add a chat",
+    "NewChatSession": "New Chat Session",
+    "JoinSharedChat": "Join Shared Chat",
+    "EditChatName": "Edit chat name",
+    "DownloadChatSession": "Download chat session",
+    "ShareLiveChatCode": "Share live chat code",
+    "DeleteChatSession": "Delete chat sesion",
+    "ShowPrompt": "Show prompt",
+    "Play": "Play",
+    "AttachFile": "Attach a file",
+    "ChatInput": "Chat input",
+    "Submit": "Submit",
+    "RecordMessage": "Record a message"
 }

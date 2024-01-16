@@ -1,5 +1,6 @@
 {
     "ChatCopilot": "Copilote Clavardage",
+    "Copilot": "Copilote",
     "Today": "Aujourd'hui",
     "Chat": "Clavardage",
     "Documents": "Documents",
@@ -13,5 +14,19 @@
     "RunLocallyVar1": "Si vous exécutez localement, assurez-vous d'avoir la variable",
     "RunLocallyVar2": "définie dans votre fichier",
     "RunLocallyVar3": "webapp/.env",
-    "LoadingChats": "Chargement des clavardages..."
+    "LoadingChats": "Chargement des clavardages...",
+    "NewChat": "Nouveau clavardage",
+    "AddChat": "Ajouter un clavardage",
+    "NewChatSession": "Nouvelle session de clavardage",
+    "JoinSharedChat": "Joindre un clavardage partagé",
+    "EditChatName": "Modifier le nom du clavardage",
+    "DownloadChatSession": "Télécharger la session de clavardage",
+    "ShareLiveChatCode": "Partager le code de clavardage",
+    "DeleteChatSession": "Supprimer le clavardage",
+    "ShowPrompt": "Afficher l'invite",
+    "Play": "Lire",
+    "AttachFile": "Joindre un fichier",
+    "ChatInput": "Entrée de clavardage",
+    "Submit": "Soumettre",
+    "RecordMessage": "Enregistrer un message"
 }

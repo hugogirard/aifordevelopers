@@ -32,6 +32,7 @@ import { useMsal } from '@azure/msal-react';
 import { AuthHelper } from '../../../libs/auth/AuthHelper';
 import { SpeechService } from '../../../libs/services/SpeechService';
 import * as speechSdk from 'microsoft-cognitiveservices-speech-sdk';
+import { useLanguageContext } from "../../../language/languageContext";
 
 const useClasses = makeStyles({
     root: {
@@ -113,6 +114,7 @@ interface ChatHistoryItemProps {
 
 export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({ message, messageIndex }) => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const chat = useChat();
     const { instance, inProgress } = useMsal();    
 
@@ -204,7 +206,7 @@ export const ChatHistoryItem: React.FC<ChatHistoryItemProps> = ({ message, messa
                     {!isMe && <Text weight="semibold">{fullName}</Text>}
                     <Text className={classes.time}>{timestampToDateString(message.timestamp, true)}</Text>
                     {isBot && <PromptDialog message={message} />}
-                    {isBot && <Tooltip content="Play" relationship='label'><Button className={classes.playButton} icon={<Play16Regular />} appearance="transparent" onClick={ () => { playText(message.content).catch((error: Error) => { console.error(error) })}} /></Tooltip> }
+                    {isBot && <Tooltip content={t("Play")} relationship='label'><Button className={classes.playButton} icon={<Play16Regular />} appearance="transparent" onClick={ () => { playText(message.content).catch((error: Error) => { console.error(error) })}} /></Tooltip> }
                 </div>
                 {content}
                 {showExtra && (
