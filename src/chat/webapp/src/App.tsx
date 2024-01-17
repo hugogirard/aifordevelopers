@@ -18,6 +18,7 @@ import { addAlert, setActiveUserInfo, setServiceInfo } from './redux/features/ap
 import { semanticKernelDarkTheme, semanticKernelLightTheme } from './styles';
 import './i18next'
 import { useLanguageContext } from "./language/languageContext";
+import LanguageSelect from "./language/languageSelect";
 
 export const useClasses = makeStyles({
     container: {
@@ -191,6 +192,7 @@ const Chat = ({
                                     setAppState(AppState.SigningOut);
                                 }}
                             />
+                            <LanguageSelect />
                         </div>
                     </div>
                 )}

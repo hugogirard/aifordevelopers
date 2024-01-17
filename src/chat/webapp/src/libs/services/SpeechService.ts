@@ -2,7 +2,7 @@
 
 import * as speechSdk from 'microsoft-cognitiveservices-speech-sdk';
 import { BaseService } from './BaseService';
-import { CurrentLanguage } from "../../language/languageContext";
+import { currentLanguage } from "../../language/languageContext";
 
 interface TokenResponse {
     token: string;
@@ -45,14 +45,14 @@ export class SpeechService extends BaseService {
 
     private generateSpeechRecognizer(token: string, region: string) {
         const speechConfig = speechSdk.SpeechConfig.fromAuthorizationToken(token, region);        
-        speechConfig.speechRecognitionLanguage = CurrentLanguage == "en" ? "en-US" : "fr-CA";
+        speechConfig.speechRecognitionLanguage = currentLanguage == "en" ? "en-US" : "fr-CA";
         const audioConfig = speechSdk.AudioConfig.fromDefaultMicrophoneInput();
         return new speechSdk.SpeechRecognizer(speechConfig, audioConfig);
     }
 
     private generateSpeechSynthesizer(token: string, region: string) {
         const speechConfig = speechSdk.SpeechConfig.fromAuthorizationToken(token, region);
-        speechConfig.speechSynthesisLanguage = CurrentLanguage == "en" ? "en-US" : "fr-CA";
+        speechConfig.speechSynthesisLanguage = currentLanguage == "en" ? "en-US" : "fr-CA";
         const audioConfig = speechSdk.AudioConfig.fromDefaultSpeakerOutput();
         return new speechSdk.SpeechSynthesizer(speechConfig, audioConfig);
     }    

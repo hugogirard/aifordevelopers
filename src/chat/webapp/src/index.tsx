@@ -13,7 +13,6 @@ import { BackendServiceUrl } from './libs/services/BaseService';
 import { setAuthConfig } from './redux/features/app/appSlice';
 
 import { LanguageContextProvider } from "./language/languageContext";
-import LanguageSelect from "./language/languageSelect";
 
 import "./i18next";
 
@@ -58,7 +57,6 @@ export function renderApp() {
                 root!.render(
                     <React.StrictMode>
                         <LanguageContextProvider>
-                            <LanguageSelect />
                             <ReduxProvider store={store}>
                                 <MsalProvider instance={msalInstance}>
                                     <App />
@@ -77,7 +75,6 @@ export function renderApp() {
     root!.render(
         <React.StrictMode>
             <LanguageContextProvider>
-                <LanguageSelect />
                 <ReduxProvider store={store}>
                     <App />
                 </ReduxProvider>

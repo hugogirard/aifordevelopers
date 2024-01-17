@@ -1,4 +1,5 @@
 import { i18n } from "i18next";
+import { defaultLanguage } from "../i18next";
 import { createContext, useContext } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -14,18 +15,17 @@ const defaultContext = {
   languages: languages
 };
 
-export let CurrentLanguage = "fr";
-export let TranslationFunc = (key: string) => key;
+export let currentLanguage = defaultLanguage;
+export let translationFunc = (key: string) => key;
 export const LanguageContext = createContext(defaultContext);
 
 export const LanguageContextProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { t, i18n } = useTranslation();
-  TranslationFunc = t;
+  translationFunc = t;
 
-  const onClickLanguageChange = (e: { target: { value: string } }) => {
-    const language = e.target.value;
-    CurrentLanguage = language;
+  const onClickLanguageChange = (language: string) => {
+    currentLanguage = language;
     i18n.changeLanguage(language).catch(() => { console.error("Error changing language"); });; //change the language
   };
 

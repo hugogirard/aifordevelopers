@@ -5,6 +5,8 @@ import { initReactI18next } from "react-i18next";
 import English from "./Translation/English.json";
 import French from "./Translation/French.json";
 
+export const defaultLanguage = "fr";
+
 const resources = {
     en: {
         translation: English,
@@ -17,7 +19,7 @@ const resources = {
 i18next.use(initReactI18next)
 .init({
   resources,
-  lng:"fr", //default language
+  lng:defaultLanguage, //default language
 }).catch(() => { console.error("Error loading i18next"); });
 
 export default i18next;

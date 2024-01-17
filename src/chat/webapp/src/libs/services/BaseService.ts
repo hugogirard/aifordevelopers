@@ -2,7 +2,7 @@
 
 import { URLSearchParams } from 'url';
 import { Plugin } from '../../redux/features/plugins/PluginsState';
-import { CurrentLanguage } from "../../language/languageContext";
+import { currentLanguage } from "../../language/languageContext";
 
 interface ServiceRequest {
     commandPath: string;
@@ -35,10 +35,10 @@ export class BaseService {
             accessToken
                 ? {
                       Authorization: `Bearer ${accessToken}`,
-                      Language: CurrentLanguage
+                      Language: currentLanguage
                   }
                 : {
-                      Language: CurrentLanguage
+                      Language: currentLanguage
                   }
         );
 
