@@ -22,11 +22,13 @@ switch (operation)
 {
     case Operation.CreateModelDocument:
         // Get ModelId and Description
+        Console.WriteLine("Training Custom Model");
         string modelId = parameters[2];
         string description = parameters[3];
         await bootStrapper.CreateModelDocument(modelId, description);
         break;
     case Operation.CreateSearchIndexingResource:
+        Console.WriteLine("Training Indexing Search");
         await bootStrapper.CreateIndexingResources();
         break;
     default:
