@@ -3,9 +3,8 @@
   "dataSourceName": "dtstorage",
   "targetIndexName": "order",
   "parameters": {
-    "batchSize": null,
-    "maxFailedItems": null,
-    "maxFailedItemsPerBatch": null,
+    "maxFailedItems": 10,
+    "maxFailedItemsPerBatch": 5,
     "configuration": {
       "dataToExtract": "storageMetadata"
     }
@@ -82,6 +81,10 @@
     {
       "sourceFieldName": "/document/do-Signature",
       "targetFieldName": "Signature"
-    }
+    },
+    {
+      "sourceFieldName": "/document/do-ItemsPurchased",
+      "targetFieldName": "ItemPurchased"
+    }    
   ]  
 }

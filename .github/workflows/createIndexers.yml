@@ -1,0 +1,35 @@
+name: Create indexing
+
+on:
+  workflow_dispatch:
+
+jobs:
+  indexing:
+    runs-on: windows-latest
+    env:
+      FORM_RECOGNIZER_ENDPOINT: ${{ secrets.FORM_RECOGNIZER_ENDPOINT }}
+      FORM_RECOGNIZER_API_KEY: ${{ secrets.FORM_RECOGNIZER_API_KEY }}
+      STORAGECNXSTRING: ${{ secrets.STORAGE_CNX_STRING }}
+      AISEARCH_VERSION: ${{ secrets.AISEARCH_VERSION }}
+      AISEARCH_ENDPOINT: ${{ secrets.AISEARCH_ENDPOINT }}
+      AISEARCH_APIKEY: ${{ secrets.AISEARCH_APIKEY }}
+      DATASOURCE_NAME: ${{ secrets.DATASOURCE_NAME }}
+      INDEX_NAME: ${{ secrets.INDEX_NAME }}
+      INDEXER_NAME: ${{ secrets.INDEXER_NAME }}
+      FUNCTION_URL: ${{ secrets.FUNCTION_URL }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x' 
+          
+      - name: Build utility helper
+        run: dotnet build  .\modelUtility.csproj --configuration Release --output ..\..\..\artefact
+        working-directory: .\src\Utility\modelUtility
+        
+      - name: Train Model
+        run: .\modelUtility.exe "CreateModelDocument" "CreateSearchIndexingResource"
+        working-directory: .\artefact        

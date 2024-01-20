@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -14,16 +15,16 @@ using System.Threading.Tasks;
 namespace modelUtility.Services;
 
 public class AISearchService : IAISearchService
-{    
+{
     private readonly IConfiguration _configuration;
     private readonly HttpClient _http;
 
     public AISearchService(IHttpClientFactory httpClientFactory,
                            IConfiguration configuration)
-    {        
+    {
         _http = httpClientFactory.CreateClient();
 
-        _http.DefaultRequestHeaders.Add("api-key", _configuration["AISEARCH_APIKEY"]);
+        _http.DefaultRequestHeaders.Add("api-key", configuration["AISEARCH_APIKEY"]);
 
         _configuration = configuration;
     }
@@ -34,6 +35,9 @@ public class AISearchService : IAISearchService
 
         await CreateIndex();
 
+        await CreateSkillSet();
+
+        await CreateIndexer();
 
     }
 
@@ -48,21 +52,35 @@ public class AISearchService : IAISearchService
         // Replace the connection string value
         string newConnectionString = _configuration["STORAGECNXSTRING"];
         jsonObject["credentials"]["connectionString"] = newConnectionString;
-        jsonObject["name"] = "test";
+        jsonObject["name"] = _configuration["DATASOURCE_NAME"];
 
-        string uri = $"{_configuration["AISEARCH_ENDPOINT"]}/datasources?api-version={_configuration["AISEARCH_VERSION"]}";
+        // Validate if the dt already exist, if it's the case delete and recreate
+        string uri = $"{_configuration["AISEARCH_ENDPOINT"]}/datasources('{jsonObject["name"]}')?api-version={_configuration["AISEARCH_VERSION"]}";
+
+        bool exists = await ValidateResourceExists(uri);
+
+        if (exists)
+            await DeleteResource(uri);
+
+        uri = $"{_configuration["AISEARCH_ENDPOINT"]}/datasources?api-version={_configuration["AISEARCH_VERSION"]}";
 
         await CallRestEndpoint(uri, jsonObject);
     }
 
-    private async Task CreateIndex() 
+    private async Task CreateIndex()
     {
         string json = await File.ReadAllTextAsync("AISearchConfiguration\\index.json");
         JObject jsonObject = JObject.Parse(json);
+        jsonObject["name"] = _configuration["INDEX_NAME"];
 
-        jsonObject["name"] = "test";
+        string uri = $"{_configuration["AISEARCH_ENDPOINT"]}/indexes('{jsonObject["name"]}')?api-version={_configuration["AISEARCH_VERSION"]}";
 
-        string uri = $"{_configuration["AISEARCH_ENDPOINT"]}/indexes?api-version={_configuration["AISEARCH_VERSION"]}";
+        bool exists = await ValidateResourceExists(uri);
+
+        if (exists)
+            await DeleteResource(uri);
+
+        uri = $"{_configuration["AISEARCH_ENDPOINT"]}/indexes?api-version={_configuration["AISEARCH_VERSION"]}";
 
         await CallRestEndpoint(uri, jsonObject);
     }
@@ -71,15 +89,41 @@ public class AISearchService : IAISearchService
     {
         string json = await File.ReadAllTextAsync("AISearchConfiguration\\skilletset.json");
         JObject jsonObject = JObject.Parse(json);
+        jsonObject["skills"][0]["uri"] = _configuration["FUNCTION_URL"];
 
-        jsonObject["name"] = "test";
+        string uri = $"{_configuration["AISEARCH_ENDPOINT"]}/skillsets('{jsonObject["name"]}')?api-version={_configuration["AISEARCH_VERSION"]}";
 
-        string uri = $"{_configuration["AISEARCH_ENDPOINT"]}/indexes?api-version={_configuration["AISEARCH_VERSION"]}";
+        bool exists = await ValidateResourceExists(uri);
+
+        if (exists)
+            await DeleteResource(uri);
+
+        uri = $"{_configuration["AISEARCH_ENDPOINT"]}/skillsets?api-version={_configuration["AISEARCH_VERSION"]}";
 
         await CallRestEndpoint(uri, jsonObject);
     }
 
-    private async Task CallRestEndpoint(string uri, JObject jsonObject) 
+    private async Task CreateIndexer() 
+    {
+        string json = await File.ReadAllTextAsync("AISearchConfiguration\\indexer.json");
+        JObject jsonObject = JObject.Parse(json);
+        jsonObject["dataSourceName"] = _configuration["DATASOURCE_NAME"];
+        jsonObject["targetIndexName"] = _configuration["INDEX_NAME"];
+        jsonObject["name"] = _configuration["INDEXER_NAME"];
+
+        string uri = $"{_configuration["AISEARCH_ENDPOINT"]}/indexers('{jsonObject["name"]}')?api-version={_configuration["AISEARCH_VERSION"]}";
+
+        bool exists = await ValidateResourceExists(uri);
+
+        if (exists)
+            await DeleteResource(uri);
+
+        uri = $"{_configuration["AISEARCH_ENDPOINT"]}/indexers?api-version={_configuration["AISEARCH_VERSION"]}";
+
+        await CallRestEndpoint(uri, jsonObject);
+    }
+
+    private async Task CallRestEndpoint(string uri, JObject jsonObject)
     {
         var request = new HttpRequestMessage()
         {
@@ -98,6 +142,50 @@ public class AISearchService : IAISearchService
         {
             string error = await response.Content.ReadAsStringAsync();
             throw new Exception(error);
+        }
+    }
+    
+    private async Task<bool> ValidateResourceExists(string uri)
+    {
+        var request = new HttpRequestMessage()
+        {
+            Method = HttpMethod.Get,
+            RequestUri = new Uri(uri)
+        };
+
+        var response = await _http.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        else
+        {
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return false;
+
+            string error = await response.Content.ReadAsStringAsync();
+            throw new Exception(error);
+        }
+    }
+
+    private async Task DeleteResource(string uri)
+    {
+        var request = new HttpRequestMessage()
+        {
+            Method = HttpMethod.Delete,
+            RequestUri = new Uri(uri)
+        };
+
+        var response = await _http.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+
+        }
+        else
+        {
+            string error = await response.Content.ReadAsStringAsync();
         }
     }
 }

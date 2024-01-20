@@ -4,21 +4,19 @@ string[]? parameters;
 
 parameters = Environment.GetCommandLineArgs();
 
-//if (parameters.Length ==  0)
-//    throw new Exception("parameters cannot be null");
+if (parameters.Length == 0)
+    throw new Exception("parameters cannot be null");
 
-//string command = parameters[1];
+string command = parameters[1];
 
-//Console.WriteLine($"Command: {command}");
+Console.WriteLine($"Command: {command}");
 
 var bootStrapper = Utility.CreateBoostrapInstance();
 
-//Operation? operation = Utility.ConvertStringToEnum(command);
+Operation? operation = Utility.ConvertStringToEnum(command);
 
-//if (operation == null)
-//    throw new Exception("Command invalid");
-
-Operation? operation = Operation.CreateSearchIndexingResource;
+if (operation == null)
+    throw new Exception("Command invalid");
 
 switch (operation)
 {

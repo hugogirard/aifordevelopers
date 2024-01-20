@@ -86,7 +86,11 @@
         {
           "name": "Signature",
           "targetName": "do-Signature"
-        }
+        },
+        {
+          "name": "ItemsPurchased",
+          "targetName": "do-ItemsPurchased"
+        }        
       ],
       "httpHeaders": {}
     }
@@ -94,8 +98,5 @@
   "cognitiveServices": {
     "@odata.type": "#Microsoft.Azure.Search.DefaultCognitiveServices",
     "description": null
-  },
-  "knowledgeStore": null,
-  "indexProjections": null,
-  "encryptionKey": null
+  }
 }
