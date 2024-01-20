@@ -16,6 +16,9 @@ import { RootState } from './redux/app/store';
 import { FeatureKeys } from './redux/features/app/AppState';
 import { addAlert, setActiveUserInfo, setServiceInfo } from './redux/features/app/appSlice';
 import { semanticKernelDarkTheme, semanticKernelLightTheme } from './styles';
+import './i18next'
+import { useLanguageContext } from "./language/languageContext";
+import LanguageSelect from "./language/languageSelect";
 
 export const useClasses = makeStyles({
     container: {
@@ -58,7 +61,7 @@ enum AppState {
 }
 
 const App = () => {
-    const classes = useClasses();
+    const classes = useClasses();    
 
     const [appState, setAppState] = React.useState(AppState.ProbeForBackend);
     const dispatch = useAppDispatch();
@@ -166,6 +169,7 @@ const Chat = ({
     appState: AppState;
     setAppState: (state: AppState) => void;
 }) => {
+    const { t } = useLanguageContext();
     const onBackendFound = React.useCallback(() => {
         setAppState(
             AuthHelper.isAuthAAD()
@@ -178,7 +182,7 @@ const Chat = ({
     return (
         <div className={classes.container}>
             <div className={classes.header}>
-                <Subtitle1 as="h1">Chat Copilot</Subtitle1>
+                <Subtitle1 as="h1">{t("ChatCopilot")}</Subtitle1>
                 {appState > AppState.SettingUserInfo && (
                     <div className={classes.cornerItems}>
                         <div className={classes.cornerItems}>
@@ -188,6 +192,7 @@ const Chat = ({
                                     setAppState(AppState.SigningOut);
                                 }}
                             />
+                            <LanguageSelect />
                         </div>
                     </div>
                 )}
@@ -202,7 +207,7 @@ const Chat = ({
             {appState === AppState.ErrorLoadingChats && (
                 <Error text={'Unable to load chats. Please try refreshing the page.'} />
             )}
-            {appState === AppState.LoadingChats && <Loading text="Loading chats..." />}
+            {appState === AppState.LoadingChats && <Loading text={t("LoadingChats")} />}
             {appState === AppState.Chat && <ChatView />}
         </div>
     );

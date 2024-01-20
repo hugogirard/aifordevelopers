@@ -13,6 +13,7 @@ import { useChat } from '../../../../libs/hooks';
 import { getFriendlyChatName } from '../../../../libs/hooks/useChat';
 import { useAppSelector } from '../../../../redux/app/hooks';
 import { Delete16 } from '../../../shared/BundledIcons';
+import { useLanguageContext } from "../../../../language/languageContext";
 
 const useClasses = makeStyles({
     root: {
@@ -29,6 +30,7 @@ interface IEditChatNameProps {
 
 export const DeleteChatDialog: React.FC<IEditChatNameProps> = ({ chatId }) => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const chat = useChat();
 
     const { conversations } = useAppSelector((state) => state.conversations);
@@ -41,24 +43,23 @@ export const DeleteChatDialog: React.FC<IEditChatNameProps> = ({ chatId }) => {
     return (
         <Dialog modalType="alert">
             <DialogTrigger>
-                <Tooltip content={'Delete chat session'} relationship="label">
+                <Tooltip content={t("DeleteChatSession")} relationship="label">
                     <Button icon={<Delete16 />} appearance="transparent" aria-label="Edit" />
                 </Tooltip>
             </DialogTrigger>
             <DialogSurface className={classes.root}>
                 <DialogBody>
-                    <DialogTitle>Are you sure you want to delete chat: {chatName}?</DialogTitle>
+                    <DialogTitle>{t("DeleteChatConfirm")}: {chatName}?</DialogTitle>
                     <DialogContent>
-                        This action will permanently delete the chat, and any associated resources and memories, for all
-                        participants, including Chat Copilot.
+                        {t("DeleteChatInfo")}
                     </DialogContent>
                     <DialogActions className={classes.actions}>
                         <DialogTrigger action="close" disableButtonEnhancement>
-                            <Button appearance="secondary">Cancel</Button>
+                            <Button appearance="secondary">{t("Cancel")}</Button>
                         </DialogTrigger>
                         <DialogTrigger action="close" disableButtonEnhancement>
                             <Button appearance="primary" onClick={onDeleteChat}>
-                                Delete
+                                {t("Delete")}
                             </Button>
                         </DialogTrigger>
                     </DialogActions>

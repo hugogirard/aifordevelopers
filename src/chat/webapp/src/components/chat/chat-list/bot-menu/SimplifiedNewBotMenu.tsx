@@ -18,6 +18,7 @@ import { RootState } from '../../../../redux/app/store';
 import { FeatureKeys } from '../../../../redux/features/app/AppState';
 import { Add20 } from '../../../shared/BundledIcons';
 import { InvitationJoinDialog } from '../../invitation-dialog/InvitationJoinDialog';
+import { useLanguageContext } from "../../../../language/languageContext";
 
 interface SimplifiedNewBotMenuProps {
     onFileUpload: () => void;
@@ -25,6 +26,7 @@ interface SimplifiedNewBotMenuProps {
 
 export const SimplifiedNewBotMenu: FC<SimplifiedNewBotMenuProps> = () => {
     const chat = useChat();
+    const { t } = useLanguageContext();
     const { features } = useAppSelector((state: RootState) => state.app);
 
     // It needs to keep the menu open to keep the FileUploader reference
@@ -46,14 +48,14 @@ export const SimplifiedNewBotMenu: FC<SimplifiedNewBotMenuProps> = () => {
         <div>
             <Menu>
                 <MenuTrigger disableButtonEnhancement>
-                    <Tooltip content="Add a chat" relationship="label">
+                    <Tooltip content={t("AddChat")} relationship="label">
                         <Button data-testid="createNewConversationButton" icon={<Add20 />} appearance="transparent" />
                     </Tooltip>
                 </MenuTrigger>
                 <MenuPopover>
                     <MenuList>
                         <MenuItem data-testid="addNewBotMenuItem" onClick={onAddChat}>
-                            New Chat Session
+                            {t("NewChatSession")}
                         </MenuItem>
                         <Divider />
                         <MenuItem
@@ -61,7 +63,7 @@ export const SimplifiedNewBotMenu: FC<SimplifiedNewBotMenuProps> = () => {
                             disabled={!features[FeatureKeys.MultiUserChat].enabled}
                             onClick={onJoinClick}
                         >
-                            Join Shared Chat
+                            {t("JoinSharedChat")}
                         </MenuItem>
                     </MenuList>
                 </MenuPopover>

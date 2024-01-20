@@ -56,25 +56,27 @@ public class PromptsOptions
     internal float DocumentMemoryMinRelevance { get; } = 0.8F;
 
     // System
-    [Required, NotEmptyOrWhitespace] public string KnowledgeCutoffDate { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string InitialBotMessage { get; set; } = string.Empty;
+    public string KnowledgeCutoffDate { get; set; } = string.Empty;
+    public string InitialBotMessage { get; set; } = string.Empty;
+    [Required, NotEmptyOrWhitespace] public string InitialBotMessageEN { get; set; } = string.Empty;
+    [Required, NotEmptyOrWhitespace] public string InitialBotMessageFR { get; set; } = string.Empty;
     [Required, NotEmptyOrWhitespace] public string SystemDescription { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string SystemResponse { get; set; } = string.Empty;
+    public string SystemResponse { get; set; } = string.Empty;
 
     /// <summary>
     /// Context bot message for meta prompt when using external information acquired from a plan.
     /// </summary>
-    [Required, NotEmptyOrWhitespace] public string ProposedPlanBotMessage { get; set; } = string.Empty;
+    public string ProposedPlanBotMessage { get; set; } = string.Empty;
 
     /// <summary>
     /// Supplement to help guide model in using data.
     /// </summary>
-    [Required, NotEmptyOrWhitespace] public string PlanResultsDescription { get; set; } = string.Empty;
+    public string PlanResultsDescription { get; set; } = string.Empty;
 
     /// <summary>
     /// Supplement to help guide model in using a response from StepwisePlanner.
     /// </summary>
-    [Required, NotEmptyOrWhitespace] public string StepwisePlannerSupplement { get; set; } = string.Empty;
+    public string StepwisePlannerSupplement { get; set; } = string.Empty;
 
     internal string[] SystemAudiencePromptComponents => new string[]
     {
@@ -97,27 +99,29 @@ public class PromptsOptions
 
     // Intent extraction
     [Required, NotEmptyOrWhitespace] public string SystemIntent { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string SystemIntentContinuation { get; set; } = string.Empty;
+    [Required] public Dictionary<string,string> FewShotEN { get; set; } = new Dictionary<string, string>();
+    [Required] public Dictionary<string, string> FewShotFR { get; set; } = new Dictionary<string, string>();
+    public string SystemIntentContinuation { get; set; } = string.Empty;
 
     // Audience extraction
-    [Required, NotEmptyOrWhitespace] public string SystemAudience { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string SystemAudienceContinuation { get; set; } = string.Empty;
+    public string SystemAudience { get; set; } = string.Empty;
+    public string SystemAudienceContinuation { get; set; } = string.Empty;
 
     // Memory storage
-    [Required, NotEmptyOrWhitespace] public string MemoryIndexName { get; set; } = string.Empty;
+    public string MemoryIndexName { get; set; } = string.Empty;
 
     // Document memory
-    [Required, NotEmptyOrWhitespace] public string DocumentMemoryName { get; set; } = string.Empty;
+    public string DocumentMemoryName { get; set; } = string.Empty;
 
     // Memory extraction
-    [Required, NotEmptyOrWhitespace] public string SystemCognitive { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string MemoryFormat { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string MemoryAntiHallucination { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string MemoryContinuation { get; set; } = string.Empty;
+    public string SystemCognitive { get; set; } = string.Empty;
+    public string MemoryFormat { get; set; } = string.Empty;
+    public string MemoryAntiHallucination { get; set; } = string.Empty;
+    public string MemoryContinuation { get; set; } = string.Empty;
 
     // Long-term memory
-    [Required, NotEmptyOrWhitespace] public string LongTermMemoryName { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string LongTermMemoryExtraction { get; set; } = string.Empty;
+    public string LongTermMemoryName { get; set; } = string.Empty;
+    public string LongTermMemoryExtraction { get; set; } = string.Empty;
 
     internal string[] LongTermMemoryPromptComponents => new string[]
     {
@@ -132,8 +136,8 @@ public class PromptsOptions
     internal string LongTermMemory => string.Join("\n", this.LongTermMemoryPromptComponents);
 
     // Working memory
-    [Required, NotEmptyOrWhitespace] public string WorkingMemoryName { get; set; } = string.Empty;
-    [Required, NotEmptyOrWhitespace] public string WorkingMemoryExtraction { get; set; } = string.Empty;
+    public string WorkingMemoryName { get; set; } = string.Empty;
+    public string WorkingMemoryExtraction { get; set; } = string.Empty;
 
     internal string[] WorkingMemoryPromptComponents => new string[]
     {

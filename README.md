@@ -1,4 +1,8 @@
+![image](./docs/ai-demo.png)
+
 .\modelUtility.exe "CreateModelDocument" "PurchaseOrder" "Purchase Order to extract key information"
 
-Deploying lab 1
-https://learn.microsoft.com/en-us/biztalk/core/step-2-configure-and-start-the-application1
+
+# REST API Azure Search Data Plane
+
+https://learn.microsoft.com/en-us/rest/api/searchservice/operation-groups?view=rest-searchservice-2023-11-01

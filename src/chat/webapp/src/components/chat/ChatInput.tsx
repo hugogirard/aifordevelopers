@@ -22,6 +22,7 @@ import { getErrorDetails } from '../utils/TextUtils';
 import { SpeechService } from './../../libs/services/SpeechService';
 import { updateUserIsTyping } from './../../redux/features/conversations/conversationsSlice';
 import { ChatStatus } from './ChatStatus';
+import { useLanguageContext } from "../../language/languageContext";
 
 const log = debug(Constants.debug.root).extend('chat-input');
 
@@ -80,6 +81,7 @@ interface ChatInputProps {
 
 export const ChatInput: React.FC<ChatInputProps> = ({ isDraggingOver, onDragLeave, onSubmit }) => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const { instance, inProgress } = useMsal();
     const dispatch = useAppDispatch();
     const { conversations, selectedId } = useAppSelector((state: RootState) => state.conversations);
@@ -143,7 +145,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ isDraggingOver, onDragLeav
 
         setValue('');
         dispatch(editConversationInput({ id: selectedId, newInput: '' }));
-        dispatch(updateBotResponseStatus({ chatId: selectedId, status: 'Calling the kernel' }));
+        dispatch(updateBotResponseStatus({ chatId: selectedId, status: t('CallingKernel') }));
         onSubmit({ value, messageType, chatId: selectedId }).catch((error) => {
             const message = `Error submitting chat input: ${(error as Error).message}`;
             log(message);
@@ -169,7 +171,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ isDraggingOver, onDragLeav
             <Alerts />
             <div className={classes.content}>
                 <Textarea
-                    title="Chat input"
+                    title={t("ChatInput")}
                     aria-label="Chat input field. Click enter to submit input."
                     ref={textAreaRef}
                     id="chat-input"
@@ -240,7 +242,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({ isDraggingOver, onDragLeav
                         appearance="transparent"
                         icon={<AttachRegular />}
                         onClick={() => documentFileRef.current?.click()}
-                        title="Attach file"
+                        title={t("AttachFile")}
                         aria-label="Attach file button"
                     />
                     {importingDocuments && importingDocuments.length > 0 && <Spinner size="tiny" />}
@@ -249,13 +251,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({ isDraggingOver, onDragLeav
                     {recognizer && (
                         <Button
                             appearance="transparent"
+                            title={t("RecordMessage")}
                             disabled={conversations[selectedId].disabled || isListening}
                             icon={<MicRegular />}
                             onClick={handleSpeech}
                         />
                     )}
                     <Button
-                        title="Submit"
+                        title={t("Submit")}
                         aria-label="Submit message"
                         appearance="transparent"
                         icon={<SendRegular />}

@@ -13,6 +13,7 @@ import { StoreMiddlewareAPI } from '../../app/store';
 import { addAlert, setMaintenance } from '../app/appSlice';
 import { ChatState } from '../conversations/ChatState';
 import { UpdatePluginStatePayload } from '../conversations/ConversationsState';
+import { translationFunc } from "../../../language/languageContext";
 
 /*
  * This is a module that encapsulates the SignalR connection
@@ -207,7 +208,7 @@ const registerSignalREvents = (hubConnection: signalR.HubConnection, store: Stor
                 addAlert({
                     message: deletedByAnotherUser
                         ? COPY.CHAT_DELETED_MESSAGE(friendlyChatName)
-                        : `Chat {${friendlyChatName}} deleted successfully.`,
+                        : `${translationFunc("ChatDeleted")}: ${friendlyChatName}`,
                     type: AlertType.Warning,
                 }),
             );

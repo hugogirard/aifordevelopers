@@ -98,6 +98,7 @@ module webapp 'modules/webapp/webapp.bicep' = {
     embeddingModel: embeddingModel
     searchName: search.outputs.searchName
     searchIndex: 'order'
+    storageName: storage.outputs.storageName
   }
 }
 

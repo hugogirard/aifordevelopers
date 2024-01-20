@@ -9,6 +9,7 @@ param completionModel string
 param embeddingModel string
 param searchName string
 param searchIndex string
+param storageName string
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
   name: appInsightsName
@@ -24,6 +25,10 @@ resource openAI 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
 
 resource search 'Microsoft.Search/searchServices@2023-11-01' existing = {
   name: searchName
+}
+
+resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
+  name: storageName  
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
@@ -178,6 +183,10 @@ resource appServiceWebConfig 'Microsoft.Web/sites/config@2022-09-01' = {
       {
         name: 'KernelMemory:Services:AzureOpenAIEmbedding:Deployment'
         value: embeddingModel
+      }
+      {
+        name: 'KernelMemory:Services:AzureBlobs:ConnectionString'
+        value: 'DefaultEndpointsProtocol=https;AccountName=${storageName};AccountKey=${storage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'     
       }
       {
         name: 'AzureAISearch:Endpoint'

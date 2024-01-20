@@ -23,6 +23,7 @@ import { useAppSelector } from '../../redux/app/hooks';
 import { RootState, resetState } from '../../redux/app/store';
 import { FeatureKeys } from '../../redux/features/app/AppState';
 import { SettingsDialog } from './settings-dialog/SettingsDialog';
+import { useLanguageContext } from "../../language/languageContext";
 
 export const useClasses = makeStyles({
     root: {
@@ -40,6 +41,7 @@ interface IUserSettingsProps {
 
 export const UserSettingsMenu: FC<IUserSettingsProps> = ({ setLoadingState }) => {
     const classes = useClasses();
+    const { t } = useLanguageContext();
     const { instance } = useMsal();
 
     const { activeUserInfo, features } = useAppSelector((state: RootState) => state.app);
@@ -110,7 +112,7 @@ export const UserSettingsMenu: FC<IUserSettingsProps> = ({ setLoadingState }) =>
                         setOpenSettingsDialog(true);
                     }}
                 >
-                    Settings
+                    {t("Settings")}
                 </Button>
             )}
             <SettingsDialog

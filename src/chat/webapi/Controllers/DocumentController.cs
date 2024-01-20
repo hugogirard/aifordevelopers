@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
 using CopilotChat.WebApi.Auth;
 using CopilotChat.WebApi.Extensions;
 using CopilotChat.WebApi.Hubs;
@@ -18,6 +19,7 @@ using CopilotChat.WebApi.Storage;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.KernelMemory;
@@ -47,6 +49,7 @@ public class DocumentController : ControllerBase
     private readonly DocumentTypeProvider _documentTypeProvider;
     private readonly IAuthInfo _authInfo;
     private readonly IContentSafetyService _contentSafetyService;
+    private readonly String _blobConnectionString;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DocumentImportController"/> class.
@@ -62,7 +65,8 @@ public class DocumentController : ControllerBase
         ChatMessageRepository messageRepository,
         ChatParticipantRepository participantRepository,
         DocumentTypeProvider documentTypeProvider,
-        IContentSafetyService contentSafetyService)
+        IContentSafetyService contentSafetyService,
+        IConfiguration configuration)
     {
         this._logger = logger;
         this._options = documentMemoryOptions.Value;
@@ -75,6 +79,7 @@ public class DocumentController : ControllerBase
         this._documentTypeProvider = documentTypeProvider;
         this._authInfo = authInfo;
         this._contentSafetyService = contentSafetyService;
+        this._blobConnectionString = configuration.GetValue<string>("KernelMemory:Services:AzureBlobs:ConnectionString");
     }
 
     /// <summary>
@@ -118,6 +123,16 @@ public class DocumentController : ControllerBase
             DocumentScopes.Chat,
             chatId,
             documentImportForm);
+    }
+
+    [Route("documents/{document}")]
+    [HttpGet]
+    public async Task<IActionResult> DownloadDocumentAsync([FromRoute] string document)
+    {
+        var blobServiceClient = new BlobClient(this._blobConnectionString, "documents", document);
+        var properties = await blobServiceClient.GetPropertiesAsync();
+        var stream = await blobServiceClient.DownloadStreamingAsync();
+        return new FileStreamResult(stream.Value.Content, properties.Value.ContentType);
     }
 
     private async Task<IActionResult> DocumentImportAsync(

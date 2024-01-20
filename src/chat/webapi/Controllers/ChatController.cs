@@ -103,11 +103,12 @@ public class ChatController : ControllerBase, IDisposable
         [FromServices] ChatParticipantRepository chatParticipantRepository,
         [FromServices] IAuthInfo authInfo,
         [FromBody] Ask ask,
-        [FromRoute] Guid chatId)
+        [FromRoute] Guid chatId,
+        [FromHeader] string language)
     {
         this._logger.LogDebug("Chat message received.");
 
-        return await this.HandleRequest(ChatFunctionName, kernel, messageRelayHubContext, planner, chatSessionRepository, chatParticipantRepository, authInfo, ask, chatId.ToString());
+        return await this.HandleRequest(ChatFunctionName, kernel, messageRelayHubContext, planner, chatSessionRepository, chatParticipantRepository, authInfo, ask, chatId.ToString(), language);
     }
 
     /// <summary>
@@ -138,11 +139,12 @@ public class ChatController : ControllerBase, IDisposable
         [FromServices] ChatParticipantRepository chatParticipantRepository,
         [FromServices] IAuthInfo authInfo,
         [FromBody] ExecutePlanParameters ask,
-        [FromRoute] Guid chatId)
+        [FromRoute] Guid chatId,
+        [FromHeader] string language)
     {
         this._logger.LogDebug("plan request received.");
 
-        return await this.HandleRequest(ProcessPlanFunctionName, kernel, messageRelayHubContext, planner, chatSessionRepository, chatParticipantRepository, authInfo, ask, chatId.ToString());
+        return await this.HandleRequest(ProcessPlanFunctionName, kernel, messageRelayHubContext, planner, chatSessionRepository, chatParticipantRepository, authInfo, ask, chatId.ToString(), language);
     }
 
     /// <summary>
@@ -168,10 +170,11 @@ public class ChatController : ControllerBase, IDisposable
        ChatParticipantRepository chatParticipantRepository,
        IAuthInfo authInfo,
        Ask ask,
-       string chatId)
+       string chatId,
+       string language)
     {
         // Put ask's variables in the context we will use.
-        var contextVariables = GetContextVariables(ask, authInfo, chatId);
+        var contextVariables = GetContextVariables(ask, authInfo, chatId, language);
 
         // Verify that the chat exists and that the user has access to it.
         ChatSession? chat = null;
@@ -412,11 +415,12 @@ public class ChatController : ControllerBase, IDisposable
         return;
     }
 
-    private static ContextVariables GetContextVariables(Ask ask, IAuthInfo authInfo, string chatId)
+    private static ContextVariables GetContextVariables(Ask ask, IAuthInfo authInfo, string chatId, string language)
     {
         const string UserIdKey = "userId";
         const string UserNameKey = "userName";
         const string ChatIdKey = "chatId";
+        const string LanguageKey = "language";
 
         var contextVariables = new ContextVariables(ask.Input);
         foreach (var variable in ask.Variables)
@@ -427,6 +431,7 @@ public class ChatController : ControllerBase, IDisposable
         contextVariables.Set(UserIdKey, authInfo.UserId);
         contextVariables.Set(UserNameKey, authInfo.Name);
         contextVariables.Set(ChatIdKey, chatId);
+        contextVariables.Set(LanguageKey, language);
 
         return contextVariables;
     }
