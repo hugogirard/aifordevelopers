@@ -14,7 +14,11 @@ public class StorageService : IStorageService
     {
         var blobServiceClient = new BlobServiceClient(configuration["STORAGECNXSTRING"]);
         var containerName = configuration["CONTAINERNAME"];
-        _blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
+
+        // If we create the indexing this value will be empty no need
+        // to throw an error
+        if (!string.IsNullOrEmpty(containerName))
+            _blobContainerClient = blobServiceClient.GetBlobContainerClient(containerName);
     }
 
     public Uri GetSasContainer()
