@@ -25,6 +25,6 @@ jobs:
         working-directory: .\src\Utility\modelUtility
 
       - name: Train Model
-        run: .\modelUtility.exe "PurchaseOrder" "Purchase Order to extract key information"
+        run: .\modelUtility.exe "CreateModelDocument" "PurchaseOrder" "Purchase Order to extract key information"
         working-directory: .\artefact
         
