@@ -61,7 +61,8 @@ enum AppState {
 }
 
 const App = () => {
-    const classes = useClasses();    
+    const classes = useClasses();
+    const { t } = useLanguageContext();
 
     const [appState, setAppState] = React.useState(AppState.ProbeForBackend);
     const dispatch = useAppDispatch();
@@ -145,7 +146,12 @@ const App = () => {
                     <UnauthenticatedTemplate>
                         <div className={classes.container}>
                             <div className={classes.header}>
-                                <Subtitle1 as="h1">Chat Copilot</Subtitle1>
+                                <Subtitle1 as="h1">{t("ChatCopilot")}</Subtitle1>
+                                <div className={classes.cornerItems}>
+                                    <div className={classes.cornerItems}>
+                                        <LanguageSelect />
+                                    </div>
+                                </div>                                
                             </div>
                             {appState === AppState.SigningOut && <Loading text="Signing you out..." />}
                             {appState !== AppState.SigningOut && <Login />}
