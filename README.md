@@ -27,6 +27,13 @@ NExt, you will need to create some [GitHub repository secrets](https://docs.gith
 | INDEX_NAME | The name of the index that will be created in Azure AI Search - here write **order** |
 | INDEXER_NAME | The name of the indexer that will be created in Azure AI Search - here write **indexer** |
 
+## Run Create Azure Resources GitHub Action
+
+Now you can go to the Actions tab and Run the **Create Azure Resources** [GitHub Actions](https://docs.github.com/en/actions).
+
+## Create more GitHub Action Secrets
+
+Once this is done you will need to create more GitHub Actions Secrets.  You need to retrieve some values in the Azure Portal.
 
 # REST API Azure Search Data Plane
 
