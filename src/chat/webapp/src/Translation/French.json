@@ -37,5 +37,8 @@
     "DeleteChatInfo": "Cette action va supprimer le clavardage de façon permanente, ainsi que toutes les ressources associées, pour tous les partipcants, incluant Copilote Clavarage.",
     "Delete": "Supprimer",
     "Cancel": "Annuler",
-    "ChatDeleted": "Le clavardage suivant a été supprimé avec succès"
+    "ChatDeleted": "Le clavardage suivant a été supprimé avec succès",
+    "SignOut": "Déconnexion",
+    "LoginMicrosoft": "Connecter avec votre compte Microsoft",
+    "NoAccount": "Vous n'avez pas de compte? Créez-en un gratuitement à"
 }

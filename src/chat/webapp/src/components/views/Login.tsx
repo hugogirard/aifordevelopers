@@ -6,16 +6,18 @@ import React from 'react';
 import signInLogo from '../../ms-symbollockup_signin_light.svg';
 import { useSharedClasses } from '../../styles';
 import { getErrorDetails } from '../utils/TextUtils';
+import { useLanguageContext } from "../../language/languageContext";
 
 export const Login: React.FC = () => {
     const { instance } = useMsal();
     const classes = useSharedClasses();
+    const { t } = useLanguageContext();
 
     return (
         <div className={classes.informativeView}>
-            <Title3>Login with your Microsoft Account</Title3>
+            <Title3>{t("LoginMicrosoft")}</Title3>
             <Body1>
-                {"Don't have an account? Create one for free at"}{' '}
+                t{"NoAccount"}{" "}
                 <a href="https://account.microsoft.com/" target="_blank" rel="noreferrer">
                     https://account.microsoft.com/
                 </a>

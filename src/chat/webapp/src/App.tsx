@@ -10,11 +10,11 @@ import { PluginGallery } from './components/open-api-plugins/PluginGallery';
 import { BackendProbe, ChatView, Error, Loading, Login } from './components/views';
 import { AuthHelper } from './libs/auth/AuthHelper';
 import { useChat, useFile } from './libs/hooks';
-import { AlertType } from './libs/models/AlertType';
+//import { AlertType } from './libs/models/AlertType';
 import { useAppDispatch, useAppSelector } from './redux/app/hooks';
 import { RootState } from './redux/app/store';
 import { FeatureKeys } from './redux/features/app/AppState';
-import { addAlert, setActiveUserInfo, setServiceInfo } from './redux/features/app/appSlice';
+import { /* addAlert, */ setActiveUserInfo, setServiceInfo } from './redux/features/app/appSlice';
 import { semanticKernelDarkTheme, semanticKernelLightTheme } from './styles';
 import './i18next'
 import { useLanguageContext } from "./language/languageContext";
@@ -92,16 +92,16 @@ const App = () => {
                     }),
                 );
 
-                // Privacy disclaimer for internal Microsoft users
-                if (account.username.split('@')[1] === 'microsoft.com') {
-                    dispatch(
-                        addAlert({
-                            message:
-                                'By using Chat Copilot, you agree to protect sensitive data, not store it in chat, and allow chat history collection for service improvements. This tool is for internal use only.',
-                            type: AlertType.Info,
-                        }),
-                    );
-                }
+                // // Privacy disclaimer for internal Microsoft users
+                // if (account.username.split('@')[1] === 'microsoft.com') {
+                //     dispatch(
+                //         addAlert({
+                //             message:
+                //                 'By using Chat Copilot, you agree to protect sensitive data, not store it in chat, and allow chat history collection for service improvements. This tool is for internal use only.',
+                //             type: AlertType.Info,
+                //         }),
+                //     );
+                // }
 
                 setAppState(AppState.LoadingChats);
             }
