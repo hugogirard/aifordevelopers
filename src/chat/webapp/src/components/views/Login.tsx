@@ -17,7 +17,7 @@ export const Login: React.FC = () => {
         <div className={classes.informativeView}>
             <Title3>{t("LoginMicrosoft")}</Title3>
             <Body1>
-                t{"NoAccount"}{" "}
+                {t("NoAccount")}{" "}
                 <a href="https://account.microsoft.com/" target="_blank" rel="noreferrer">
                     https://account.microsoft.com/
                 </a>
