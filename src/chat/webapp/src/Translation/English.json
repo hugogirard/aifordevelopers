@@ -15,7 +15,7 @@
     "RunLocallyVar2": "variable set in the file",
     "RunLocallyVar3": "webapp/.env",
     "LoadingChats": "Loading chats...",
-    "NewChat": "New Chat",
+    "NewChat": "New chat",
     "AddChat": "Add a chat",
     "NewChatSession": "New Chat Session",
     "JoinSharedChat": "Join Shared Chat",
