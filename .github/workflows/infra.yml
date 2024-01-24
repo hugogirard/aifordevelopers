@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  RG_NAME: 'rg-ai-demo'
+  RG_NAME: ${{secrets.RG_NAME}}
   LOCATION: 'eastus'
   DEPLOYMENT_NAME: 'ai-demo-deployment'
 
