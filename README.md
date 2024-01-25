@@ -200,9 +200,16 @@ Now you can create the last GitHub Secret
 |-------------|-------|------|
 | FUNCTION_URL | URL of the function | 
 
-# Index documents
+## Index documents
 
 Now, you can run the **Github Action** called **Create indexing**
+
+## Now deploy the Bot Web App
+
+Now, you can run the **Github Action** called **Deploy Chat**
+
+## Test the application
+
 
 # REST API Azure Search Data Plane
 
