@@ -25,20 +25,20 @@ resource cosmos 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   }
 }
 
-resource db 'Microsoft.DocumentDB/databaseAccounts/apis/databases@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat'
+resource db 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2023-11-15' = {
+  parent: cosmos
+  name: 'CopilotChat'  
   properties: {
     resource: {
       id: 'CopilotChat'
     }
+    options: {}
   }
 }
 
-resource chatmemorysources 'Microsoft.DocumentDB/databaseAccounts/apis/databases/containers@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat/chatmemorysources'
-  dependsOn: [
-    db
-  ]
+resource chatmemorysources 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
+  parent: db
+  name: 'chatmemorysources'
   properties: {
     resource: {
       id: 'chatmemorysources'
@@ -52,14 +52,13 @@ resource chatmemorysources 'Microsoft.DocumentDB/databaseAccounts/apis/databases
         indexingMode: 'Consistent'
       }
     }        
+    options: {}
   }
 } 
 
-resource chatmessages 'Microsoft.DocumentDB/databaseAccounts/apis/databases/containers@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat/chatmessages'
-  dependsOn: [
-    db
-  ]  
+resource chatmessages 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
+  name: 'chatmessages'
+  parent: db
   properties: {
     resource: {
       id: 'chatmessages'
@@ -71,16 +70,15 @@ resource chatmessages 'Microsoft.DocumentDB/databaseAccounts/apis/databases/cont
       }
       indexingPolicy: {
         indexingMode: 'Consistent'
-      }
+      }      
     }        
+    options: {}
   }
 } 
 
-resource chatparticipants 'Microsoft.DocumentDB/databaseAccounts/apis/databases/containers@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat/chatparticipants'
-  dependsOn: [
-    db
-  ]  
+resource chatparticipants 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
+  parent: db
+  name: 'chatparticipants'
   properties: {
     resource: {
       id: 'chatparticipants'
@@ -94,14 +92,13 @@ resource chatparticipants 'Microsoft.DocumentDB/databaseAccounts/apis/databases/
         indexingMode: 'Consistent'
       }
     }        
+    options: {}
   }
 } 
 
-resource chatsessions 'Microsoft.DocumentDB/databaseAccounts/apis/databases/containers@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat/chatsessions'
-  dependsOn: [
-    db
-  ]  
+resource chatsessions 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2023-11-15' = {
+  parent: db
+  name: 'chatsessions'
   properties: {
     resource: {
       id: 'chatsessions'
@@ -115,6 +112,7 @@ resource chatsessions 'Microsoft.DocumentDB/databaseAccounts/apis/databases/cont
         indexingMode: 'Consistent'
       }
     }        
+    options: {}
   }
 } 
 
