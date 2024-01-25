@@ -10,12 +10,12 @@ param completionModel string = 'gpt-35-turbo'
 
 param embeddingModel string = 'text-embedding-ada-002'
 
-var suffix = uniqueString(resourceGroup().id)
-
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: rgName
   location: location
 }
+
+var suffix = uniqueString(rg.id)
 
 module storage 'modules/storage/storage.bicep' = {
   scope: resourceGroup(rg.name)
@@ -25,15 +25,6 @@ module storage 'modules/storage/storage.bicep' = {
     suffix: suffix
   }
 }
-
-// module formRecognizer 'modules/cognitive/aidocument.bicep' = {
-//   scope: resourceGroup(rg.name)
-//   name: 'formRecognizer'
-//   params: {
-//     location: location
-//     suffix: suffix
-//   }
-// }
 
 module aiService 'modules/cognitive/aiservices.bicep' = {
   scope: resourceGroup(rg.name)
