@@ -83,7 +83,7 @@ resource appServiceWebConfig 'Microsoft.Web/sites/config@2022-09-01' = {
       }
       {
         name: 'ChatStore:Type'
-        value: 'volatile'
+        value: 'cosmos'
       }
       {
         name: 'ChatStore:Cosmos:Database'
@@ -104,11 +104,11 @@ resource appServiceWebConfig 'Microsoft.Web/sites/config@2022-09-01' = {
       {
         name: 'ChatStore:Cosmos:ChatParticipantsContainer'
         value: 'chatparticipants'
-      }
+      }         
       {
         name: 'ChatStore:Cosmos:ConnectionString'
-        value: ''
-      }
+        value: cosmos.listConnectionStrings().connectionStrings[0].connectionString
+      }   
       {
         name: 'AzureSpeech:Region'
         value: aiServices.location
@@ -204,15 +204,7 @@ resource appServiceWebConfig 'Microsoft.Web/sites/config@2022-09-01' = {
       {
         name: 'AzureAISearch:IndexName'
         value: searchIndex
-      }
-      {
-        name: 'ChatStore:Type'
-        value: 'cosmos'
-      }         
-      {
-        name: 'ChatStore:Cosmos:ConnectionString'
-        value: cosmos.listConnectionStrings().connectionStrings[0].connectionString
-      }                        
+      }                     
     ])
   }
 }
