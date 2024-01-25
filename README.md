@@ -33,9 +33,9 @@ NExt, you will need to create some [GitHub repository secrets](https://docs.gith
 | AZURE_CREDENTIALS | The service principal credentials needed in the Github Action | [GitHub Action](https://github.com/marketplace/actions/azure-login)
 | AZURE_SUBSCRIPTION | The subscription ID where the resources will be created |
 | PA_TOKEN | Needed to create GitHub repository secret within the GitHub action |  [Github Action](https://github.com/gliech/create-github-secret-action) |
-| DATASOURCE_NAME | The name of the datasource that will be created in Azure AI Search (can be dtTest) |
-| INDEX_NAME | The name of the index that will be created in Azure AI Search - here write **order** |
-| INDEXER_NAME | The name of the indexer that will be created in Azure AI Search - here write **indexer** |
+| DATASOURCE_NAME | The name of the datasource that will be created in Azure AI Search, enter: dtorder |
+| INDEX_NAME | The name of the index that will be created in Azure AI Search - here enter **order** |
+| INDEXER_NAME | The name of the indexer that will be created in Azure AI Search - here enter **indexer** |
 
 ## Run Create Azure Resources GitHub Action
 
@@ -200,6 +200,9 @@ Now you can create the last GitHub Secret
 |-------------|-------|------|
 | FUNCTION_URL | URL of the function | 
 
+# Index documents
+
+Now, you can run the **Github Action** called **Create indexing**
 
 # REST API Azure Search Data Plane
 
