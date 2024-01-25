@@ -35,7 +35,7 @@ resource db 'Microsoft.DocumentDB/databaseAccounts/apis/databases@2016-03-31' = 
 }
 
 resource chatmemorysources 'Microsoft.DocumentDB/databaseAccounts/apis/databases/containers@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat/chatmemorysources'
+  name: '${cosmos.name}/sql/${db.name}/chatmemorysources'
   properties: {
     resource: {
       id: 'chatmemorysources'
@@ -53,7 +53,7 @@ resource chatmemorysources 'Microsoft.DocumentDB/databaseAccounts/apis/databases
 } 
 
 resource chatmessages 'Microsoft.DocumentDB/databaseAccounts/apis/databases/containers@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat/chatmessages'
+  name: '${cosmos.name}/sql/${db.name}/chatmessages'
   properties: {
     resource: {
       id: 'chatmessages'
@@ -71,7 +71,7 @@ resource chatmessages 'Microsoft.DocumentDB/databaseAccounts/apis/databases/cont
 } 
 
 resource chatparticipants 'Microsoft.DocumentDB/databaseAccounts/apis/databases/containers@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat/chatparticipants'
+  name: '${cosmos.name}/sql/${db.name}/chatparticipants'
   properties: {
     resource: {
       id: 'chatparticipants'
@@ -89,7 +89,7 @@ resource chatparticipants 'Microsoft.DocumentDB/databaseAccounts/apis/databases/
 } 
 
 resource chatsessions 'Microsoft.DocumentDB/databaseAccounts/apis/databases/containers@2016-03-31' = {
-  name: '${cosmos.name}/sql/CopilotChat/chatsessions'
+  name: '${cosmos.name}/sql/${db.name}/chatsessions'
   properties: {
     resource: {
       id: 'chatsessions'
