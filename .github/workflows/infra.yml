@@ -30,7 +30,7 @@ jobs:
           scope: subscription
           region: ${{ env.LOCATION }}
           template: ./infra/main.bicep
-          parameters: location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}}
+          parameters: location=${{ env.LOCATION}} rgName=${{ env.RG_NAME}} searchIndex=${{ secrets.INDEX_NAME }}
           
       - uses: gliech/create-github-secret-action@v1
         name: Write function app name

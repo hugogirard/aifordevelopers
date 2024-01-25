@@ -6,6 +6,9 @@ param location string
 @description('The name of the resource group to be created')
 param rgName string 
 
+@description('The name of the index in Azure AI Search')
+param searchIndex string
+
 param completionModel string = 'gpt-35-turbo'
 
 param embeddingModel string = 'text-embedding-ada-002'
@@ -97,7 +100,7 @@ module webapp 'modules/webapp/webapp.bicep' = {
     completionModel: completionModel
     embeddingModel: embeddingModel
     searchName: search.outputs.searchName
-    searchIndex: 'order'
+    searchIndex: searchIndex
     storageName: storage.outputs.storageName
     cosmosName: cosmos.outputs.cosmosName
   }
