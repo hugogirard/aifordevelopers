@@ -85,6 +85,15 @@ module openAi 'modules/cognitive/openai.bicep' = {
   }
 }
 
+module cosmos 'modules/cosmos/cosmos.bicep' = {
+  scope: resourceGroup(rg.name)
+  name: 'cosmos'
+  params: {
+    location: location
+    suffix: suffix
+  }
+}
+
 module webapp 'modules/webapp/webapp.bicep' = {
   scope: resourceGroup(rg.name)
   name: 'webapp'
@@ -99,6 +108,7 @@ module webapp 'modules/webapp/webapp.bicep' = {
     searchName: search.outputs.searchName
     searchIndex: 'order'
     storageName: storage.outputs.storageName
+    cosmosName: cosmos.outputs.cosmosName
   }
 }
 

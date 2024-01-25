@@ -10,6 +10,7 @@ param embeddingModel string
 param searchName string
 param searchIndex string
 param storageName string
+param cosmosName string
 
 resource appInsights 'Microsoft.Insights/components@2020-02-02' existing = {
   name: appInsightsName
@@ -29,6 +30,10 @@ resource search 'Microsoft.Search/searchServices@2023-11-01' existing = {
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-04-01' existing = {
   name: storageName  
+}
+
+resource cosmos 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' existing = {
+  name: cosmosName
 }
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
@@ -199,7 +204,15 @@ resource appServiceWebConfig 'Microsoft.Web/sites/config@2022-09-01' = {
       {
         name: 'AzureAISearch:IndexName'
         value: searchIndex
-      }            
+      }
+      {
+        name: 'ChatStore:Type'
+        value: 'cosmos'
+      }         
+      {
+        name: 'ChatStore:Cosmos:ConnectionString'
+        value: cosmos.listConnectionStrings().connectionStrings[0].connectionString
+      }                        
     ])
   }
 }
