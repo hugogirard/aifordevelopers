@@ -10,7 +10,7 @@ param completionModel string = 'gpt-35-turbo'
 
 param embeddingModel string = 'text-embedding-ada-002'
 
-var suffix = toLower(uniqueString(subscription().id))
+var suffix = uniqueString(resourceGroup().id)
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: rgName

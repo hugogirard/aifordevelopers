@@ -12,6 +12,15 @@ Here a diagram that represent the architecture deployed in this GitHub repositor
 
 .\modelUtility.exe "CreateModelDocument" "PurchaseOrder" "Purchase Order to extract key information"
 
+# Prerequisite
+
+- A tenant that have Access to Azure Open AI Service, you can request access [here](https://go.microsoft.com/fwlink/?linkid=2222006&clcid=0x409)
+
+Be sure to select this option:
+
+![image](./images/ai1.png)
+
+
 # How to deploy the Azure Resources
 
 First, **fork** this repository
@@ -20,6 +29,7 @@ NExt, you will need to create some [GitHub repository secrets](https://docs.gith
 
 | Secret Name | Value | Link
 |-------------|-------|------|
+| RG_NAME | The name of the service group to create | 
 | AZURE_CREDENTIALS | The service principal credentials needed in the Github Action | [GitHub Action](https://github.com/marketplace/actions/azure-login)
 | AZURE_SUBSCRIPTION | The subscription ID where the resources will be created |
 | PA_TOKEN | Needed to create GitHub repository secret within the GitHub action |  [Github Action](https://github.com/gliech/create-github-secret-action) |
@@ -29,7 +39,17 @@ NExt, you will need to create some [GitHub repository secrets](https://docs.gith
 
 ## Run Create Azure Resources GitHub Action
 
-Now you can go to the Actions tab and Run the **Create Azure Resources** [GitHub Actions](https://docs.github.com/en/actions).
+Now you can go to the Actions tab 
+
+You will see this message
+
+![image](./images/ai2.png), click the **green button** to confirm.
+
+Now, run the **Create Azure Resources** [GitHub Actions](https://docs.github.com/en/actions).
+
+To do so, in the right you see a gray button called **Run workflow**, click on it and click on the **green button**.
+
+
 
 ## Create more GitHub Action Secrets
 
