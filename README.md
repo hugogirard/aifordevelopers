@@ -1,16 +1,14 @@
 # Introduction
 
-The purpose of this lab is to show an end to end example of knowledge mining for structured documents (PDF) and leveraging Azure Open AI to consult on your own data.
+The purpose of this lab is to show an end to end example of extracting structured data from unstructured documents (PDF) and leveraging Azure Open AI to query the data.
 
-This sample will provide CI/CD to train a custom model in Document Intelligent, index all documents provided in Azure AI Search and call a custom skillsets that will leverage the trained model in Document Intelligent.
+This sample will provide CI/CD to train a custom model in AI Document Intelligence, index all documents provided in Azure AI Search and call a custom skillsets that will leverage the trained model in AI Document Intelligence.
 
 # Architecture
 
 Here a diagram that represent the architecture deployed in this GitHub repository.
 
 ![image](./docs/ai-demo.png)
-
-.\modelUtility.exe "CreateModelDocument" "PurchaseOrder" "Purchase Order to extract key information"
 
 # Prerequisite
 
@@ -25,19 +23,19 @@ Be sure to select this option:
 
 First, **fork** this repository
 
-NExt, you will need to create some [GitHub repository secrets](https://docs.github.com/en/codespaces/managing-codespaces-for-your-organization/managing-encrypted-secrets-for-your-repository-and-organization-for-codespaces#adding-secrets-for-a-repository) first.  Here the list of secrets you will need to create.
+Next, you will need to create some [GitHub repository secrets](https://docs.github.com/en/codespaces/managing-codespaces-for-your-organization/managing-encrypted-secrets-for-your-repository-and-organization-for-codespaces#adding-secrets-for-a-repository).  Here's the list of secrets you will need to create.
 
 | Secret Name | Value | Link
 |-------------|-------|------|
-| RG_NAME | The name of the service group to create | 
-| AZURE_CREDENTIALS | The service principal credentials needed in the Github Action | [GitHub Action](https://github.com/marketplace/actions/azure-login)
+| RG_NAME | The name of the resource group to create | 
+| AZURE_CREDENTIALS | The service principal credentials needed in GitHub Actions | [GitHub Actions](https://github.com/marketplace/actions/azure-login)
 | AZURE_SUBSCRIPTION | The subscription ID where the resources will be created |
-| PA_TOKEN | Needed to create GitHub repository secret within the GitHub action |  [Github Action](https://github.com/gliech/create-github-secret-action) |
+| PA_TOKEN | Needed to create a GitHub repository secret within GitHub Actions |  [GitHub Actions](https://github.com/gliech/create-github-secret-action) |
 | DATASOURCE_NAME | The name of the datasource that will be created in Azure AI Search, enter: dtorder |
 | INDEX_NAME | The name of the index that will be created in Azure AI Search - here enter **order** |
 | INDEXER_NAME | The name of the indexer that will be created in Azure AI Search - here enter **indexer** |
 
-## Run Create Azure Resources GitHub Action
+## Run Create Azure Resources GitHub Actions workflow
 
 Now you can go to the Actions tab 
 
@@ -51,7 +49,7 @@ Now, run the **Create Azure Resources** [GitHub Actions](https://docs.github.com
 
 To do so, in the right you see a gray button called **Run workflow**, click on it and click on the **green button**.
 
-Once the GitHub Workflow finish, you should see those Azure resources in your **resource group**
+Once the GitHub Actions workflow finishes, you should see these Azure resources in your **resource group**
 
 ![image](./images/ai3.png)
 
@@ -65,7 +63,7 @@ Click on it, and now you will see a folder called **training-assets**
 
 ![image](./images/ai5.png)
 
-You need to upload all the files present in this folder in your Azure Storage created when you ran the **GitHub Workflows**.
+You need to upload all the files present in this folder to your Azure Storage created when you ran the **GitHub Actions workflow**.
 
 Be sure to **clone** the GitHub repository on you local machine so you can upload easily the files.
 
@@ -101,7 +99,7 @@ Now, be sure to copy the **endpoint** and the **KEY 1**
 
 ![image](./images/ai12.png)
 
-Now, go create two **GitHub secrets**
+Now, go create two **GitHub Secrets**
 
 | Secret Name | Value | Link
 |-------------|-------|------|
@@ -118,7 +116,7 @@ Be sure to copy the **connection string**, you will need to click on the button 
 
 ![image](./images/ai14.png)
 
-Now create a new Github Secret
+Now create a new GitHub Secret
 
 | Secret Name | Value | Link
 |-------------|-------|------|
@@ -130,19 +128,19 @@ Your secrets should look like this
 
 ## Train the model
 
-Now, you are ready to train the custom model in Azure AI Document Intelligent.  Go to your GitHub Action and run the one called **Train document intelligent model**.
+Now, you are ready to train the custom model in Azure AI Document Intelligence.  Go to your GitHub Actions and run the one called **Train document intelligent model**.
 
 # Deploy the Azure Function
 
 For indexing the document we need to deploy the Azure Function that contains the custom skillset.
 
-To do this, run the **GitHub Actions** called **Deploy Azure Function**
+To do this, run the **GitHub Actions workflow** called **Deploy Azure Function**
 
 # Create Azure Search Index and Indexing
 
-Now it's time to create the index and indexer in Azure AI Search.  But first we need to upload the document we will need to index.
+Now it's time to create the index and indexer in Azure AI Search.  But first, we need to upload the document we need to index.
 
-Go back in the **GitHub Repository**, you should have clone it right now.
+Go back in the **GitHub repository**, you should have cloned it by now.
 
 In the folder called **samples**, you will see another folder called **indexing-documents**
 
@@ -156,7 +154,7 @@ Upload all the files, it should look like this
 
 ## Create 4 new GitHub Secrets
 
-Now we need to create 4 new **GitHub secrets**.
+Now we need to create 4 new **GitHub Secrets**.
 
 First, go back to the Azure Portal in the resource group and click on the Search Service.
 
@@ -202,14 +200,19 @@ Now you can create the last GitHub Secret
 
 ## Index documents
 
-Now, you can run the **Github Action** called **Create indexing**
+Now, you can run the **Github Action workflow** called **Create indexing**
 
 ## Now deploy the Bot Web App
 
-Now, you can run the **Github Action** called **Deploy Chat**
+Now, you can run the **Github Action worflow** called **Deploy Chat**
 
 ## Test the application
 
+You can test the application by using queries such as these:
+- What's the date of PO 852159?
+- What's the phone number of Nourish Groceries?
+- How many orders are above 500$?
+- What items are on PO 852159?
 
 # REST API Azure Search Data Plane
 
