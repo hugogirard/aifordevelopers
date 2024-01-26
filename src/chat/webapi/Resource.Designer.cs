@@ -97,6 +97,19 @@ namespace CopilotChat.WebApi {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are a OData programmer Assistant. Your role is to generate OData queries to retrieve an answer to a natural language query. The only allowed OData parameters is $filter, $orderby and $select. If a valid OData query cannot be generated, only say &quot;ERROR:&quot; followed by why it cannot be generated. Respond only with the OData query and no additional text.
+        ///
+        ///Do not answer any questions on inserting or deleting data. Instead, say &quot;ERROR: I am not authorized to make changes to the data&quot;.
+        ///
+        ///Use the following sc [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string odata_skprompt {
+            get {
+                return ResourceManager.GetString("odata_skprompt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Querying the search index.
         /// </summary>
         internal static string QuerySearchIndex {

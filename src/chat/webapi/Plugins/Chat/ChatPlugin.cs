@@ -1,16 +1,5 @@
 ﻿// Copyright (c) Microsoft. All rights reserved.
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using CopilotChat.WebApi.Auth;
 using CopilotChat.WebApi.Hubs;
 using CopilotChat.WebApi.Models.Response;
@@ -19,8 +8,6 @@ using CopilotChat.WebApi.Options;
 using CopilotChat.WebApi.Plugins.Utils;
 using CopilotChat.WebApi.Services;
 using CopilotChat.WebApi.Storage;
-using Irony.Parsing;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -34,6 +21,17 @@ using Microsoft.SemanticKernel.Orchestration;
 using Microsoft.SemanticKernel.Planning;
 using Microsoft.SemanticKernel.TemplateEngine;
 using Microsoft.SemanticKernel.TemplateEngine.Basic;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using ChatCompletionContextMessages = Microsoft.SemanticKernel.AI.ChatCompletion.ChatHistory;
 using CopilotChatMessage = CopilotChat.WebApi.Models.Storage.CopilotChatMessage;
 
@@ -525,6 +523,25 @@ public class ChatPlugin
         return context;
     }
 
+    private async Task<string> GenerateODataQuery(SKContext chatContext, string userRequest, string language, CancellationToken cancellationToken)
+    {
+        var generateQueryFunction = this._kernel.CreateSemanticFunction(
+            Resource.odata_skprompt,
+            functionName: "GenerateODataQuery",
+            pluginName: nameof(ChatPlugin),
+            description: "Generate OData query.");
+
+        var result = await generateQueryFunction.InvokeAsync(
+            chatContext,
+            CreateChatRequestSettings(),
+            cancellationToken
+        );
+
+        TokenUtils.GetFunctionTokenUsage(result, chatContext, this._logger, "SystemIntentExtraction");
+
+        return result.GetValue<string>();
+    }
+
     /// <summary>
     /// Generate the necessary chat context to create a prompt then invoke the model to get a response.
     /// </summary>
@@ -544,17 +561,7 @@ public class ChatPlugin
 
         await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.ExtractUserIntent, cancellationToken);
 
-        var queryChat = completionService.CreateNewChat(this._promptOptions.SystemIntent);
-
-        foreach(var fewShot in language == "en" ? this._promptOptions.FewShotEN : this._promptOptions.FewShotFR)
-        {
-            queryChat.AddUserMessage($"{fewShot.Key}:");
-            queryChat.AddAssistantMessage(fewShot.Value);
-        }
-
-        queryChat.AddUserMessage(userMessage.Content);
-        var query = await completionService.GenerateMessageAsync(queryChat, cancellationToken: cancellationToken);
-        chatContext.Variables.Set(TokenUtils.GetFunctionKey(this._logger, "SystemIntentExtraction")!, (TokenUtils.GetContextMessagesTokenCount(queryChat) + TokenUtils.TokenCount(query)).ToString(CultureInfo.CurrentCulture));
+        var query = await GenerateODataQuery(chatContext, userMessage.Content, language, cancellationToken);
 
         if (!query.Contains("ERROR"))
         {
@@ -562,7 +569,7 @@ public class ChatPlugin
 
             var data = await GetDataFromIndex(query);
             response = Resource.NoRelevantData;
-      
+
             if (!String.IsNullOrEmpty(data))
             {
                 var jsonData = JsonNode.Parse(data)!["value"];
@@ -586,7 +593,7 @@ public class ChatPlugin
                 }
             }
         }
-        
+
         var chatMessage = await this.CreateBotMessageOnClient(chatId, userId, JsonSerializer.Serialize(responsePrompt ?? new object()), response, cancellationToken, citations);
 
         // Save the message into chat history
@@ -604,11 +611,12 @@ public class ChatPlugin
         return chatMessage;
     }
 
-    private async Task<string> GetDataFromIndex(string query)
+    [SKFunction, Description("Get the data from the search index")]
+    public async Task<string> GetDataFromIndex([Description("The OData query")] string query)
     {
         var client = this._httpClientFactory.CreateClient("GetDataFromIndex");
         client.DefaultRequestHeaders.Add("api-key", this._azureAISearchOptions.APIKey);
-        // TODO: sanitize the odataFilter value
+        // TODO: Sanitize the odata query value
         var response = await client.GetAsync($"{this._azureAISearchOptions.Endpoint}/indexes('{this._azureAISearchOptions.IndexName}')/docs?{query}&api-version=2023-11-01");
         if (response.IsSuccessStatusCode)
         {
@@ -616,8 +624,7 @@ public class ChatPlugin
         }
         else
         {
-            
-            this._logger.LogWarning($"Error getting data from index: {response.StatusCode}: {response.Content.ReadAsStringAsync()}");
+            this._logger.LogWarning($"Error getting data from index: {response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
             return string.Empty;
         }
     }
