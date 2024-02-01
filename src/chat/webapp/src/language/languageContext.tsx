@@ -88,7 +88,8 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
     });
 
     if (messagesToTranslate.length > 0) {
-      const accessTokenResponse = await fetch(`${BackendServiceUrl}speechToken`, {
+      const tokenUri = new URL("speechToken", BackendServiceUrl);
+      const accessTokenResponse = await fetch(tokenUri, {
           method: "GET",                    
           headers: {
               "Authorization": `Bearer ${await AuthHelper.getSKaaSAccessToken(instance, inProgress)}`,
