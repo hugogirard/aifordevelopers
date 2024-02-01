@@ -56,12 +56,12 @@ export function renderApp() {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 root!.render(
                     <React.StrictMode>
-                        <ReduxProvider store={store}>
-                            <LanguageContextProvider>
-                                <MsalProvider instance={msalInstance}>
+                        <ReduxProvider store={store}>                            
+                            <MsalProvider instance={msalInstance}>
+                                <LanguageContextProvider>
                                     <App />
-                                </MsalProvider>
-                           </LanguageContextProvider>
+                                </LanguageContextProvider>
+                            </MsalProvider>                           
                         </ReduxProvider>                        
                     </React.StrictMode>,
                 );
