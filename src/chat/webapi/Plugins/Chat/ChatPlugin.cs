@@ -341,7 +341,7 @@ public class ChatPlugin
 
         // Save this new message to memory such that subsequent chat responses can use it
         await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.SaveUserMessageChatHistory, cancellationToken);
-        var newUserMessage = await this.SaveNewMessageAsync(message, userId, userName, chatId, messageType, cancellationToken);
+        var newUserMessage = await this.SaveNewMessageAsync(message, userId, userName, chatId, messageType, language: language, cancellationToken);
 
         // Clone the context to avoid modifying the original context variables.
         var chatContext = context.Clone();
@@ -373,6 +373,7 @@ public class ChatPlugin
         [Description("Name of the user")] string userName,
         [Description("Unique and persistent identifier for the chat")] string chatId,
         [Description("Proposed plan object"), DefaultValue(null), SKName("proposedPlan")] string? planJson,
+        [Description("The selected language")] string language,
         SKContext context,
         CancellationToken cancellationToken = default)
     {
@@ -401,7 +402,7 @@ public class ChatPlugin
 
         // Save this new message to memory such that subsequent chat responses can use it
         await this.UpdateBotResponseStatusOnClientAsync(chatId, "Saving user message to chat history", cancellationToken);
-        var newUserMessage = await this.SaveNewMessageAsync(message, userId, userName, chatId, CopilotChatMessage.ChatMessageType.Message.ToString(), cancellationToken);
+        var newUserMessage = await this.SaveNewMessageAsync(message, userId, userName, chatId, CopilotChatMessage.ChatMessageType.Message.ToString(), language: language, cancellationToken);
 
         // If GeneratedPlanMessageId exists on plan object, update that message with new plan state.
         // This signals that this plan was freshly proposed by the model and already saved as a bot response message in chat history.
@@ -418,6 +419,7 @@ public class ChatPlugin
                deserializedPlan.Plan.Description,
                chatId,
                userId,
+               language: language,
                cancellationToken
            );
         }
@@ -432,6 +434,7 @@ public class ChatPlugin
                 string.Empty,
                 chatId,
                 userId,
+                language: language,
                 cancellationToken,
                 TokenUtils.EmptyTokenUsages()
             );
@@ -486,7 +489,7 @@ public class ChatPlugin
 
                 // Get bot response and stream to client
                 var promptView = new BotResponsePrompt(systemInstructions, "", deserializedPlan.UserIntent, "", plannerDetails, chatHistoryString, promptTemplate);
-                chatMessage = await this.HandleBotResponseAsync(chatId, userId, chatContext, promptView, cancellationToken);
+                chatMessage = await this.HandleBotResponseAsync(chatId, userId, chatContext, promptView, language: language, cancellationToken);
 
                 if (chatMessage.TokenUsage != null)
                 {
@@ -506,6 +509,7 @@ public class ChatPlugin
                     string.Empty,
                     chatId,
                     userId,
+                    language: language,
                     cancellationToken,
                     TokenUtils.EmptyTokenUsages()
                 );
@@ -631,7 +635,7 @@ public class ChatPlugin
         }
 
         // Build the final response message
-        var chatMessage = await this.CreateBotMessageOnClient(chatId, userId, JsonSerializer.Serialize(responsePrompt ?? new object()), response, cancellationToken, citations);
+        var chatMessage = await this.CreateBotMessageOnClient(chatId, userId, JsonSerializer.Serialize(responsePrompt ?? new object()), response, language: language, cancellationToken, citations);
 
         // Save the message into chat history
         await this.UpdateBotResponseStatusOnClientAsync(chatId, Resource.SaveMessageChatHistory, cancellationToken);
@@ -708,6 +712,7 @@ public class ChatPlugin
                 proposedPlan.Plan.Description,
                 chatId,
                 userId,
+                language: userMessage.Language,
                 cancellationToken,
                 // TODO: [Issue #2106] Accommodate plan token usage differently
                 this.GetTokenUsages(chatContext)
@@ -718,7 +723,7 @@ public class ChatPlugin
         if (this._externalInformationPlugin.UseStepwiseResultAsBotResponse(planResult))
         {
             var promptDetails = new BotResponsePrompt("", "", userIntent, "", plannerDetails, "", new ChatHistory());
-            return await this.HandleBotResponseAsync(chatId, userId, chatContext, promptDetails, cancellationToken, null, this._externalInformationPlugin.StepwiseThoughtProcess!.RawResult);
+            return await this.HandleBotResponseAsync(chatId, userId, chatContext, promptDetails, language: userMessage.Language, cancellationToken, null, this._externalInformationPlugin.StepwiseThoughtProcess!.RawResult);
         }
 
         // Query relevant semantic and document memories
@@ -750,7 +755,7 @@ public class ChatPlugin
 
         // Stream the response to the client
         var promptView = new BotResponsePrompt(systemInstructions, audience, userIntent, memoryText, plannerDetails, chatHistory, promptTemplate);
-        return await this.HandleBotResponseAsync(chatId, userId, chatContext, promptView, cancellationToken, citationMap.Values.AsEnumerable());
+        return await this.HandleBotResponseAsync(chatId, userId, chatContext, promptView, userMessage.Language, cancellationToken, citationMap.Values.AsEnumerable());
     }
 
     /// <summary>
@@ -783,6 +788,7 @@ public class ChatPlugin
         string userId,
         SKContext chatContext,
         BotResponsePrompt promptView,
+        string language,
         CancellationToken cancellationToken,
         IEnumerable<CitationSource>? citations = null,
         string? responseContent = null)
@@ -793,7 +799,7 @@ public class ChatPlugin
             // Get bot response and stream to client
             await this.UpdateBotResponseStatusOnClientAsync(chatId, "Generating bot response", cancellationToken);
             chatMessage = await AsyncUtils.SafeInvokeAsync(
-                () => this.StreamResponseToClientAsync(chatId, userId, promptView, cancellationToken, citations), nameof(StreamResponseToClientAsync));
+                () => this.StreamResponseToClientAsync(chatId, userId, promptView, language: language, cancellationToken, citations), nameof(StreamResponseToClientAsync));
         }
         else
         {
@@ -802,6 +808,7 @@ public class ChatPlugin
                 userId,
                 JsonSerializer.Serialize(promptView),
                 responseContent!,
+                language: language,
                 cancellationToken,
                 citations
             );
@@ -900,7 +907,7 @@ public class ChatPlugin
     /// <param name="chatId">The chat ID</param>
     /// <param name="type">Type of the message</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    private async Task<CopilotChatMessage> SaveNewMessageAsync(string message, string userId, string userName, string chatId, string type, CancellationToken cancellationToken)
+    private async Task<CopilotChatMessage> SaveNewMessageAsync(string message, string userId, string userName, string chatId, string type, string language, CancellationToken cancellationToken)
     {
         // Make sure the chat exists.
         if (!await this._chatSessionRepository.TryFindByIdAsync(chatId))
@@ -913,6 +920,7 @@ public class ChatPlugin
             userName,
             chatId,
             message,
+            language: language,
             string.Empty,
             null,
             CopilotChatMessage.AuthorRoles.User,
@@ -941,6 +949,7 @@ public class ChatPlugin
         string prompt,
         string chatId,
         string userId,
+        string language,
         CancellationToken cancellationToken,
         Dictionary<string, int>? tokenUsage = null,
         IEnumerable<CitationSource>? citations = null
@@ -958,6 +967,7 @@ public class ChatPlugin
             userId,
             prompt,
             response,
+            language: language,
             cancellationToken,
             citations,
             tokenUsage
@@ -1072,6 +1082,7 @@ public class ChatPlugin
         string chatId,
         string userId,
         BotResponsePrompt prompt,
+        string language,
         CancellationToken cancellationToken,
         IEnumerable<CitationSource>? citations = null)
     {
@@ -1089,6 +1100,7 @@ public class ChatPlugin
             userId,
             JsonSerializer.Serialize(prompt),
             string.Empty,
+            language: language,
             cancellationToken,
             citations
         );
@@ -1119,11 +1131,12 @@ public class ChatPlugin
         string userId,
         string prompt,
         string content,
+        string language,
         CancellationToken cancellationToken,
         IEnumerable<CitationSource>? citations = null,
         Dictionary<string, int>? tokenUsage = null)
     {
-        var chatMessage = CopilotChatMessage.CreateBotResponseMessage(chatId, content, prompt, citations, tokenUsage);
+        var chatMessage = CopilotChatMessage.CreateBotResponseMessage(chatId, content, prompt, language: language, citations, tokenUsage);
         await this._messageRelayHubContext.Clients.Group(chatId).SendAsync("ReceiveMessage", chatId, userId, chatMessage, cancellationToken);
         return chatMessage;
     }

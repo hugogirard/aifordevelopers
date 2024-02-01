@@ -80,6 +80,8 @@ public class CopilotChatMessage : IStorageEntity
     /// </summary>
     public string Content { get; set; }
 
+    public string Language { get; set; }
+
     /// <summary>
     /// Id of the message.
     /// </summary>
@@ -133,6 +135,7 @@ public class CopilotChatMessage : IStorageEntity
         string userName,
         string chatId,
         string content,
+        string language,
         string? prompt = null,
         IEnumerable<CitationSource>? citations = null,
         AuthorRoles authorRole = AuthorRoles.User,
@@ -144,6 +147,7 @@ public class CopilotChatMessage : IStorageEntity
         this.UserName = userName;
         this.ChatId = chatId;
         this.Content = content;
+        this.Language = language;
         this.Id = Guid.NewGuid().ToString();
         this.Prompt = prompt ?? string.Empty;
         this.Citations = citations;
@@ -159,9 +163,9 @@ public class CopilotChatMessage : IStorageEntity
     /// <param name="content">The message</param>
     /// <param name="prompt">The prompt used to generate the message</param>
     /// <param name="tokenUsage">Total token usage of response completion</param>
-    public static CopilotChatMessage CreateBotResponseMessage(string chatId, string content, string prompt, IEnumerable<CitationSource>? citations, IDictionary<string, int>? tokenUsage = null)
+    public static CopilotChatMessage CreateBotResponseMessage(string chatId, string content, string prompt, string language, IEnumerable<CitationSource>? citations, IDictionary<string, int>? tokenUsage = null)
     {
-        return new CopilotChatMessage("Bot", "Bot", chatId, content, prompt, citations, AuthorRoles.Bot, IsPlan(content) ? ChatMessageType.Plan : ChatMessageType.Message, tokenUsage);
+        return new CopilotChatMessage("Bot", "Bot", chatId, content, language: language, prompt, citations, AuthorRoles.Bot, IsPlan(content) ? ChatMessageType.Plan : ChatMessageType.Message, tokenUsage);
     }
 
     /// <summary>
@@ -171,9 +175,9 @@ public class CopilotChatMessage : IStorageEntity
     /// <param name="userName">The user name that uploaded the document</param>
     /// <param name="chatId">The chat ID that this message belongs to</param>
     /// <param name="documentMessageContent">The document message content</param>
-    public static CopilotChatMessage CreateDocumentMessage(string userId, string userName, string chatId, DocumentMessageContent documentMessageContent)
+    public static CopilotChatMessage CreateDocumentMessage(string userId, string userName, string chatId, string language, DocumentMessageContent documentMessageContent)
     {
-        return new CopilotChatMessage(userId, userName, chatId, documentMessageContent.ToString(), string.Empty, null, AuthorRoles.User, ChatMessageType.Document);
+        return new CopilotChatMessage(userId, userName, chatId, documentMessageContent.ToString(), language: language, string.Empty, null, AuthorRoles.User, ChatMessageType.Document);
     }
 
     /// <summary>

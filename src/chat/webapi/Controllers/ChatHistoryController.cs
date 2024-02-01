@@ -103,6 +103,7 @@ public class ChatHistoryController : ControllerBase
             newChat.Id,
             language == "en" ? this._promptOptions.InitialBotMessageEN : this._promptOptions.InitialBotMessageFR,
             string.Empty, // The initial bot message doesn't need a prompt.
+            language: language,
             null,
             TokenUtils.EmptyTokenUsages());
         await this._messageRepository.CreateAsync(chatMessage);

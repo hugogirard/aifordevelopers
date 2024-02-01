@@ -93,14 +93,16 @@ public class DocumentController : ControllerBase
     public Task<IActionResult> DocumentImportAsync(
         [FromServices] IKernelMemory memoryClient,
         [FromServices] IHubContext<MessageRelayHub> messageRelayHubContext,
-        [FromForm] DocumentImportForm documentImportForm)
+        [FromForm] DocumentImportForm documentImportForm,
+        [FromHeader] string language)
     {
         return this.DocumentImportAsync(
             memoryClient,
             messageRelayHubContext,
             DocumentScopes.Global,
             DocumentMemoryOptions.GlobalDocumentChatId,
-            documentImportForm
+            documentImportForm,
+            language: language
         );
     }
 
@@ -115,14 +117,16 @@ public class DocumentController : ControllerBase
         [FromServices] IKernelMemory memoryClient,
         [FromServices] IHubContext<MessageRelayHub> messageRelayHubContext,
         [FromRoute] Guid chatId,
-        [FromForm] DocumentImportForm documentImportForm)
+        [FromForm] DocumentImportForm documentImportForm,
+        [FromHeader] string language)
     {
         return this.DocumentImportAsync(
             memoryClient,
             messageRelayHubContext,
             DocumentScopes.Chat,
             chatId,
-            documentImportForm);
+            documentImportForm,
+            language: language);
     }
 
     [Route("documents/{document}")]
@@ -140,7 +144,8 @@ public class DocumentController : ControllerBase
         IHubContext<MessageRelayHub> messageRelayHubContext,
         DocumentScopes documentScope,
         Guid chatId,
-        DocumentImportForm documentImportForm)
+        DocumentImportForm documentImportForm,
+        string language)
     {
         try
         {
@@ -158,7 +163,7 @@ public class DocumentController : ControllerBase
 
         var importResults = await this.ImportDocumentsAsync(memoryClient, chatId, documentImportForm, documentMessageContent);
 
-        var chatMessage = await this.TryCreateDocumentUploadMessage(chatId, documentMessageContent);
+        var chatMessage = await this.TryCreateDocumentUploadMessage(chatId, documentMessageContent, language: language);
 
         if (chatMessage == null)
         {
@@ -472,12 +477,14 @@ public class DocumentController : ControllerBase
     /// <returns>A ChatMessage object if successful, null otherwise</returns>
     private async Task<CopilotChatMessage?> TryCreateDocumentUploadMessage(
         Guid chatId,
-        DocumentMessageContent messageContent)
+        DocumentMessageContent messageContent,
+        string language)
     {
         var chatMessage = CopilotChatMessage.CreateDocumentMessage(
             this._authInfo.UserId,
             this._authInfo.Name, // User name
             chatId.ToString(),
+            language: language,
             messageContent);
 
         try

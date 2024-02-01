@@ -56,13 +56,13 @@ export function renderApp() {
                 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 root!.render(
                     <React.StrictMode>
-                        <LanguageContextProvider>
-                            <ReduxProvider store={store}>
+                        <ReduxProvider store={store}>
+                            <LanguageContextProvider>
                                 <MsalProvider instance={msalInstance}>
                                     <App />
                                 </MsalProvider>
-                            </ReduxProvider>
-                        </LanguageContextProvider>
+                           </LanguageContextProvider>
+                        </ReduxProvider>                        
                     </React.StrictMode>,
                 );
             }
@@ -73,12 +73,12 @@ export function renderApp() {
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     root!.render(
-        <React.StrictMode>
-            <LanguageContextProvider>
-                <ReduxProvider store={store}>
+        <React.StrictMode>            
+            <ReduxProvider store={store}>
+                <LanguageContextProvider>
                     <App />
-                </ReduxProvider>
-            </LanguageContextProvider>
+                </LanguageContextProvider>
+            </ReduxProvider>            
         </React.StrictMode>,
     );
 }

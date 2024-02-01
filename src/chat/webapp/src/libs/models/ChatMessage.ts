@@ -1,5 +1,6 @@
 // Copyright (c) Microsoft. All rights reserved.
 
+import { Dictionary } from '@reduxjs/toolkit';
 import { PlanState } from './Plan';
 import { TokenUsage } from './TokenUsage';
 
@@ -67,4 +68,6 @@ export interface IChatMessage {
     // TODO: [Issue #42] Persistent RLHF
     userFeedback?: UserFeedback;
     tokenUsage?: TokenUsage;
+    language: string;
+    translations: Dictionary<string>;
 }

@@ -130,6 +130,7 @@ const registerSignalREvents = (hubConnection: signalR.HubConnection, store: Stor
                         : PlanState.Disabled;
             }
 
+            message.translations = { [message.language]: message.content };
             store.dispatch({ type: 'conversations/addMessageToConversationFromServer', payload: { chatId, message } });
         },
     );

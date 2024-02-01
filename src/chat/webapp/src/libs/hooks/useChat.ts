@@ -37,7 +37,7 @@ import { getErrorDetails } from '../../components/utils/TextUtils';
 import { FeatureKeys } from '../../redux/features/app/AppState';
 import { PlanState } from '../models/Plan';
 import { ContextVariable } from '../semantic-kernel/model/AskResult';
-import { translationFunc } from "../../language/languageContext";
+import { currentLanguage, translationFunc } from "../../language/languageContext";
 
 export interface GetResponseOptions {
     messageType: ChatMessageType;
@@ -88,6 +88,7 @@ export const useChat = () => {
             await chatService
                 .createChatAsync(chatTitle, await AuthHelper.getSKaaSAccessToken(instance, inProgress))
                 .then((result: ICreateChatSessionResponse) => {
+                    result.initialBotMessage.translations = { [result.initialBotMessage.language]: result.initialBotMessage.content };
                     const newChat: ChatState = {
                         id: result.chatSession.id,
                         title: result.chatSession.title,
@@ -122,6 +123,8 @@ export const useChat = () => {
             content: value,
             type: messageType,
             authorRole: AuthorRoles.User,
+            language: currentLanguage,
+            translations: { [currentLanguage]: value },
         };
 
         dispatch(addMessageToConversationFromUser({ message: chatInput, chatId: chatId }));
@@ -185,6 +188,10 @@ export const useChat = () => {
                     const chatUsers = await chatService.getAllChatParticipantsAsync(chatSession.id, accessToken);
                     const chatMessages = await chatService.getChatMessagesAsync(chatSession.id, 0, 100, accessToken);
 
+                    chatMessages.forEach((message) => {
+                        message.translations = { [message.language]: message.content };
+                    });
+
                     loadedConversations[chatSession.id] = {
                         id: chatSession.id,
                         title: chatSession.title,
@@ -241,6 +248,10 @@ export const useChat = () => {
             const accessToken = await AuthHelper.getSKaaSAccessToken(instance, inProgress);
             await botService.uploadAsync(bot, accessToken).then(async (chatSession: IChatSession) => {
                 const chatMessages = await chatService.getChatMessagesAsync(chatSession.id, 0, 100, accessToken);
+
+                chatMessages.forEach((message) => {
+                    message.translations = { [message.language]: message.content };
+                });
 
                 const newChat: ChatState = {
                     id: chatSession.id,
@@ -344,6 +355,10 @@ export const useChat = () => {
             await chatService.joinChatAsync(chatId, accessToken).then(async (result: IChatSession) => {
                 // Get chat messages
                 const chatMessages = await chatService.getChatMessagesAsync(result.id, 0, 100, accessToken);
+
+                chatMessages.forEach((message) => {
+                    message.translations = { [message.language]: message.content };
+                });                
 
                 // Get chat users
                 const chatUsers = await chatService.getAllChatParticipantsAsync(result.id, accessToken);
