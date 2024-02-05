@@ -75,7 +75,7 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
               messageIdOrIndex: message.id as string,
               property: 'content',
               value: message.translations[key],
-              frontLoad: false,
+              frontLoad: true,
             })
           );
         }
@@ -114,7 +114,7 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
             messageIdOrIndex: messagesToTranslate[i].id as string,
             property: 'content',
             value: translationResults[i].translations[0].text,
-            frontLoad: false,
+            frontLoad: true,
           })
         );
        
@@ -124,7 +124,7 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
             messageIdOrIndex: messagesToTranslate[i].id as string,
             property: 'translations',
             value:  {...messagesToTranslate[i].translations, [targetLang]: translationResults[i].translations[0].text},
-            frontLoad: false,
+            frontLoad: true,
           })
         );
       }
