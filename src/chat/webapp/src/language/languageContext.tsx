@@ -63,8 +63,9 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
     const targetLang = language;
 
     const translationJson: any[] = [];
-    const messagesToTranslate: IChatMessage[] = [];
+    const messagesToTranslate: Array<{ index: number, message: IChatMessage }> = new Array<{index: number, message: IChatMessage}>;
     Object.keys(conversations).forEach((convoKey) => { 
+      let i = 0;
       conversations[convoKey].messages.forEach((message) => {
         const key = Object.keys(message.translations).find(key => key == targetLang);
         if (key) 
@@ -72,7 +73,7 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
           dispatch(
             updateMessageProperty({
               chatId: convoKey,
-              messageIdOrIndex: message.id as string,
+              messageIdOrIndex: i,
               property: 'content',
               value: message.translations[key],
               frontLoad: true,
@@ -81,9 +82,10 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
         }
         else
         {
-          messagesToTranslate.push(message);
+          messagesToTranslate.push({ index: i, message });
           translationJson.push({ "text": message.content });
         }
+        i++;
       });
     });
 
@@ -110,8 +112,8 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
       for (let i = 0; i < translationResults.length; i++) {
         dispatch(
           updateMessageProperty({
-            chatId: messagesToTranslate[i].chatId,
-            messageIdOrIndex: messagesToTranslate[i].id as string,
+            chatId: messagesToTranslate[i].message.chatId,
+            messageIdOrIndex: messagesToTranslate[i].index,
             property: 'content',
             value: translationResults[i].translations[0].text,
             frontLoad: true,
@@ -120,10 +122,10 @@ export const LanguageContextProvider = ({ children }: { children: React.ReactNod
        
         dispatch(
           updateMessageProperty({
-            chatId: messagesToTranslate[i].chatId,
-            messageIdOrIndex: messagesToTranslate[i].id as string,
+            chatId: messagesToTranslate[i].message.chatId,
+            messageIdOrIndex: messagesToTranslate[i].index,
             property: 'translations',
-            value:  {...messagesToTranslate[i].translations, [targetLang]: translationResults[i].translations[0].text},
+            value:  {...messagesToTranslate[i].message.translations, [targetLang]: translationResults[i].translations[0].text},
             frontLoad: true,
           })
         );

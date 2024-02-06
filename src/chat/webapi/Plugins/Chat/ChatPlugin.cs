@@ -628,7 +628,7 @@ public class ChatPlugin
                     // Return relevant document link if only one document is returned
                     if (jsonData.AsArray().Count == 1 && jsonData.AsArray()[0]!["metadata_storage_name"] != null)
                     {
-                        citations.Add(new CitationSource() { RelevanceScore = double.Parse(jsonData.AsArray()[0]!["@search.score"]!.ToString()), Link = jsonData.AsArray()[0]!["metadata_storage_name"]!.ToString() });
+                        citations.Add(new CitationSource() { RelevanceScore = double.Parse(jsonData.AsArray()[0]!["@search.score"]!.ToString(), new CultureInfo("en")), Link = jsonData.AsArray()[0]!["metadata_storage_name"]!.ToString() });
                     }
                 }
             }
