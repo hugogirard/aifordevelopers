@@ -1,0 +1,7 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+POST http://localhost:7266/api/GetSQL
+Content-Type: application/json
+
+{
+    "Question": "What's the date of PO 852159?"
+}
