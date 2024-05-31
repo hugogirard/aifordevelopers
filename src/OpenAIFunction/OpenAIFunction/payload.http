@@ -1,5 +1,5 @@
 # For more info on HTTP files go to https://aka.ms/vs/httpfile
-POST http://localhost:7266/api/GetSQL
+POST http://localhost:7071/api/GetSQL
 Content-Type: application/json
 
 {
